@@ -702,8 +702,8 @@ button:disabled{opacity:.38;cursor:not-allowed}
   function coverHTML(n, over) {
     const cv = Object.assign({}, n.cover, over || {});
     const img = typeof cv.image === 'string' && cv.image.startsWith('data:image/') ? cv.image : '';
-    let st = cv.style; if (st === 'image' && !img) st = 'aurora';
-    const bg = (st === 'image' || st === 'glass') && img ? ` style="background-image:url('${img}')"` : '';
+    const st = 'glass';
+    const bg = img ? ` style="background-image:url('${img}')"` : '';
     return `<div class="cover cv-${st} cv-${cv.mode === 'cinematic' ? 'cinematic' : 'editorial'}" style="--h:${+cv.hue || 0}"><div class="c-bg"${bg}></div><div class="c-in"><div><div class="c-title">${esc(n.title)}</div>${n.tagline ? `<p class="c-tag">${esc(n.tagline)}</p>` : ''}</div><div class="c-author">${esc(n.author)}</div></div></div>`;
   }
 
@@ -783,8 +783,8 @@ button:disabled{opacity:.38;cursor:not-allowed}
     $('#coverPreview').innerHTML = coverHTML(n); $('#coverPreview').className = 'cover-mode-' + (n.cover.mode || 'editorial');
     $('#coverEditorial').classList.toggle('cover-mode-active', (n.cover.mode || 'editorial') === 'editorial'); $('#coverCinematic').classList.toggle('cover-mode-active', n.cover.mode === 'cinematic');
     const hasImg = !!(n.cover.image && n.cover.image.startsWith('data:image/'));
-    const styles = ['aurora','moon','lines','frame','glass'].concat(hasImg ? ['image'] : []);
-    $('#styleList').innerHTML = styles.map(s => `<button class="style-opt${n.cover.style === s ? ' on' : ''}" data-s="${s}" title="${({aurora:'แสงเหนือ',moon:'จันทร์',lines:'เส้นสาย',frame:'กรอบ',glass:'กระจกล่าง',image:'ภาพของคุณ'})[s]}">${coverHTML(n, {style:s})}</button>`).join('');
+    const styles = ['glass'];
+    $('#styleList').innerHTML = styles.map(s => `<button class="style-opt${' on'}" data-s="${s}" title="กระจกล่าง">${coverHTML(n, {style:s})}</button>`).join('');
     $('#cRemoveImg').hidden = !hasImg;
     $('#crumb').textContent = n.title;
   }
@@ -806,18 +806,34 @@ button:disabled{opacity:.38;cursor:not-allowed}
     } catch(err) { toast('เปิดไฟล์ภาพนี้ไม่ได้'); }
   };
   function fileToCover(file) {
+    // EXIF-orientation aware: createImageBitmap rotates per EXIF so portraits
+    // from phones don't come out stretched; then center-crop to 2:3.
     return new Promise((res, rej) => {
-      const fr = new FileReader();
-      fr.onload = () => {
-        const im = new Image();
-        im.onload = () => {
-          const W = 600, H = 900, cv = document.createElement('canvas'); cv.width = W; cv.height = H;
-          const cx = cv.getContext('2d'), s = Math.max(W / im.width, H / im.height), w = im.width * s, h = im.height * s;
-          cx.drawImage(im, (W - w) / 2, (H - h) / 2, w, h); res(cv.toDataURL('image/jpeg', .82));
-        };
-        im.onerror = rej; im.src = fr.result;
+      const W = 600, H = 900;
+      const finish = (src, iw, ih) => {
+        try {
+          const cv = document.createElement('canvas'); cv.width = W; cv.height = H;
+          const cx = cv.getContext('2d');
+          const s = Math.max(W / iw, H / ih), w = iw * s, h = ih * s;
+          cx.drawImage(src, (W - w) / 2, (H - h) / 2, w, h);
+          if (src && src.close) { try { src.close(); } catch(e) {} }
+          res(cv.toDataURL('image/jpeg', .82));
+        } catch(err) { rej(err); }
       };
-      fr.onerror = rej; fr.readAsDataURL(file);
+      if ('createImageBitmap' in window) {
+        createImageBitmap(file, {imageOrientation: 'from-image'}).then(
+          bmp => finish(bmp, bmp.width, bmp.height),
+          () => legacyLoad());
+      } else { legacyLoad(); }
+      function legacyLoad() {
+        const fr = new FileReader();
+        fr.onload = () => {
+          const im = new Image();
+          im.onload = () => finish(im, im.naturalWidth, im.naturalHeight);
+          im.onerror = rej; im.src = fr.result;
+        };
+        fr.onerror = rej; fr.readAsDataURL(file);
+      }
     });
   }
   $('#coverRead').onclick = () => go('read');
