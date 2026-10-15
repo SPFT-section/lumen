@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="th"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>A5 — Smoked Glass (preview)</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@300;400;500;600&family=Noto+Serif+Thai:wght@400;500;600&display=swap">
+<style>
+:root{--h:160}
+*{box-sizing:border-box}body{margin:0;background:#070707;color:#f2f2ef;font-family:"IBM Plex Sans Thai",system-ui,sans-serif;padding:32px 20px}
+.wrap{max-width:1000px;margin:0 auto;display:grid;grid-template-columns:minmax(280px,360px) 1fr;gap:40px;align-items:start}
+@media(max-width:760px){.wrap{grid-template-columns:1fr}}
+.cv{aspect-ratio:2/3;border-radius:18px;overflow:hidden;position:relative;color:#fff;background:#060607;
+ box-shadow:0 30px 70px -20px rgba(0,0,0,.95)}
+.cv::before{content:"";position:absolute;inset:0;
+ background:radial-gradient(90% 45% at 50% 0%,hsl(var(--h) 50% 30%/.5),transparent 65%),
+ radial-gradient(80% 40% at 50% 110%,hsl(var(--h) 55% 22%/.45),transparent 65%)}
+.card{position:absolute;inset:8% 7%;z-index:1;border-radius:14px;padding:24px 22px;display:flex;flex-direction:column;
+ background:rgba(255,255,255,.045);border:1px solid rgba(255,255,255,.12);
+ backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);box-shadow:inset 1px 0 0 rgba(255,255,255,.1)}
+.gen{font-size:10px;letter-spacing:.3em;color:hsl(var(--h) 60% 72%);margin-bottom:14px}
+h1{font-family:"Noto Serif Thai",serif;font-weight:600;font-size:clamp(28px,4.5vw,38px);line-height:1.35;margin:0}
+.tag{color:rgba(255,255,255,.62);font-family:"Noto Serif Thai",serif;font-size:14px;line-height:1.85;margin:14px 0 0}
+.sp{flex:1}.ft{display:flex;justify-content:space-between;align-items:center;border-top:1px solid rgba(255,255,255,.12);padding-top:12px;font-size:12px}
+.au{letter-spacing:.22em;text-transform:uppercase;color:rgba(255,255,255,.85)}
+.pg{color:rgba(255,255,255,.35)}
+.panel{border:1px solid rgba(255,255,255,.1);border-radius:16px;padding:20px;background:#0e0e0e}
+.field{margin-bottom:14px}.field label{display:block;font-size:12px;color:#999;margin-bottom:6px}
+.input{width:100%;background:#000;border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:10px 12px;color:#fff}
+input[type=range]{width:100%;accent-color:#fff}.note{color:#777;font-size:13px;line-height:1.7}
+</style></head><body><div class="wrap">
+<div><div class="cv"><div class="card">
+<div class="gen">LUMEN · DARK SERIES</div>
+<h1 id="t">ราตรีแห่งดวงดาว</h1>
+<p class="tag" id="g">เมื่อแสงสุดท้ายดับลง เรื่องราวของเราจึงเริ่มต้น</p>
+<div class="sp"></div><div class="ft"><span class="au" id="a">นามปากกา</span><span class="pg">❦</span></div>
+</div></div></div>
+<div class="panel"><h2 style="margin:0 0 4px">A5 — Smoked Glass</h2>
+<p class="note">การ์ดกระจกควันบนพื้นดำ มีแสงสีจางๆ บนล่าง กลมกลืนกับ dark theme ของแอปที่สุด</p>
+<div class="field"><label>ชื่อเรื่อง</label><input class="input" id="in-t" value="ราตรีแห่งดวงดาว"></div>
+<div class="field"><label>คำโปรย</label><input class="input" id="in-g" value="เมื่อแสงสุดท้ายดับลง เรื่องราวของเราจึงเริ่มต้น"></div>
+<div class="field"><label>ผู้แต่ง</label><input class="input" id="in-a" value="นามปากกา"></div>
+<div class="field"><label>แสงพื้น (<span id="hv">160</span>)</label><input type="range" id="in-h" min="0" max="360" value="160"></div>
+</div></div>
+<script>const $=s=>document.querySelector(s);
+$('#in-t').oninput=e=>$('#t').textContent=e.target.value||'เรื่องไม่มีชื่อ';
+$('#in-g').oninput=e=>$('#g').textContent=e.target.value;
+$('#in-a').oninput=e=>$('#a').textContent=e.target.value||'นามปากกา';
+$('#in-h').oninput=e=>{document.documentElement.style.setProperty('--h',e.target.value);$('#hv').textContent=e.target.value};</script></body></html>

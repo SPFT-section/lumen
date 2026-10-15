@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="th"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>A1 — Onyx (preview)</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@300;400;500;600&family=Noto+Serif+Thai:wght@400;500;600;700&display=swap">
+<style>
+:root{--h:210}
+*{box-sizing:border-box}body{margin:0;background:#070707;color:#f2f2ef;font-family:"IBM Plex Sans Thai",system-ui,sans-serif;padding:32px 20px}
+.wrap{max-width:1000px;margin:0 auto;display:grid;grid-template-columns:minmax(280px,360px) 1fr;gap:40px;align-items:start}
+@media(max-width:760px){.wrap{grid-template-columns:1fr}}
+.cv{aspect-ratio:2/3;border-radius:6px 14px 14px 6px;overflow:hidden;position:relative;background:#000;color:#fafafa;
+ box-shadow:0 30px 60px -20px rgba(0,0,0,.9),inset 4px 0 0 rgba(255,255,255,.07)}
+.in{position:absolute;inset:0;padding:12% 11% 9%;display:flex;flex-direction:column}
+.eb{font-size:11px;letter-spacing:.34em;color:hsl(var(--h) 70% 70%)}
+.line{width:44px;height:2px;background:hsl(var(--h) 80% 60%);margin:14px 0 20px}
+h1{font-family:"Noto Serif Thai",serif;font-weight:700;font-size:clamp(30px,4.8vw,42px);line-height:1.35;margin:0}
+.tag{margin:18px 0 0;color:rgba(250,250,250,.55);font-family:"Noto Serif Thai",serif;font-size:15px;line-height:1.85}
+.sp{flex:1}.ft{border-top:1px solid rgba(255,255,255,.12);padding-top:13px;display:flex;justify-content:space-between;font-size:12px}
+.au{letter-spacing:.24em;text-transform:uppercase;color:rgba(255,255,255,.85)}
+.no{color:rgba(255,255,255,.35)}
+.panel{border:1px solid rgba(255,255,255,.1);border-radius:16px;padding:20px;background:#0e0e0e}
+.field{margin-bottom:14px}.field label{display:block;font-size:12px;color:#999;margin-bottom:6px}
+.input{width:100%;background:#000;border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:10px 12px;color:#fff}
+input[type=range]{width:100%;accent-color:#fff}.note{color:#777;font-size:13px;line-height:1.7}
+</style></head><body><div class="wrap">
+<div><div class="cv"><div class="in">
+<div><div class="eb">LUMEN · NOVEL</div><div class="line"></div>
+<h1 id="t">ราตรีแห่งดวงดาว</h1><p class="tag" id="g">เมื่อแสงสุดท้ายดับลง เรื่องราวของเราจึงเริ่มต้น</p></div>
+<div class="sp"></div><div class="ft"><span class="au" id="a">นามปากกา</span><span class="no">№ 01</span></div>
+</div></div></div>
+<div class="panel"><h2 style="margin:0 0 4px">A1 — Onyx</h2>
+<p class="note">ดำสนิท #000 ตัวอักษรขาวล้วน เส้น accent เส้นเดียว เหมาะกับ dark theme ที่สุด</p>
+<div class="field"><label>ชื่อเรื่อง</label><input class="input" id="in-t" value="ราตรีแห่งดวงดาว"></div>
+<div class="field"><label>คำโปรย</label><input class="input" id="in-g" value="เมื่อแสงสุดท้ายดับลง เรื่องราวของเราจึงเริ่มต้น"></div>
+<div class="field"><label>ผู้แต่ง</label><input class="input" id="in-a" value="นามปากกา"></div>
+<div class="field"><label>โทนสีเส้น (<span id="hv">210</span>)</label><input type="range" id="in-h" min="0" max="360" value="210"></div>
+</div></div>
+<script>const $=s=>document.querySelector(s);
+$('#in-t').oninput=e=>$('#t').textContent=e.target.value||'เรื่องไม่มีชื่อ';
+$('#in-g').oninput=e=>$('#g').textContent=e.target.value;
+$('#in-a').oninput=e=>$('#a').textContent=e.target.value||'นามปากกา';
+$('#in-h').oninput=e=>{document.documentElement.style.setProperty('--h',e.target.value);$('#hv').textContent=e.target.value};</script></body></html>
