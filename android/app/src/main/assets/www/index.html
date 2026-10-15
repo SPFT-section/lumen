@@ -1293,7 +1293,27 @@ body.tlock{overflow:hidden}
     {v:'data', modal:'settings', sel:'#backupMake', kick:'ตั้งค่า', h:'สำรองข้อมูลเสมอ', s:'สร้างข้อมูลสำรองเก็บไว้อีกที่ได้', bar:99},
     {v:null, kick:'จบแล้ว', h:'พร้อมเขียนเรื่องแรก', s:'กด ? มุมขวาบนดูทัวร์ซ้ำได้ตลอด', bar:100}
   ];
-  let tourIdx = -1, tourTimer = null, tourType = null, tourShow = null, tourNovel = null;
+  let tourIdx = -1, tourTimer = null, tourType = null, tourShow = null, tourNovel = null, tourPrevV = null;
+  function tourPlace(r) {
+    const t = $('#ttext'), W = 300;
+    if (!r) {
+      t.style.left = Math.max(20, (innerWidth - 360) / 2) + 'px';
+      t.style.top = Math.max(64, innerHeight / 2 - 160) + 'px';
+      return;
+    }
+    let x, y;
+    if (innerWidth < 700) {
+      x = Math.min(Math.max(16, r.left), innerWidth - W - 16);
+      y = r.bottom + 14;
+      if (y + 270 > innerHeight - 40) y = Math.max(64, r.top - 280);
+    } else {
+      x = r.left + r.width + 26; y = r.top - 10;
+      if (x + W > innerWidth - 16) x = r.left - W - 26;
+      if (x < 16) { x = Math.max(16, r.left); y = r.bottom + 20; }
+      if (y + 270 > innerHeight - 60) y = Math.max(64, r.top - 280);
+    }
+    t.style.left = Math.max(16, x) + 'px'; t.style.top = Math.max(60, y) + 'px';
+  }
   function ensureTourNovel() {
     const sorted = lib.novels.slice().sort((a, b) => b.updatedAt - a.updatedAt);
     if (sorted.length) return sorted[0].id;
@@ -1305,19 +1325,6 @@ body.tlock{overflow:hidden}
     n.lastChapter = n.chapters[0].id;
     lib.novels.push(n); schedulePersist();
     return n.id;
-  }
-  function tourPlace(r) {
-    const t = $('#ttext'), W = 300;
-    if (!r) {
-      t.style.left = Math.max(20, (innerWidth - 360) / 2) + 'px';
-      t.style.top = Math.max(64, innerHeight / 2 - 160) + 'px';
-      return;
-    }
-    let x = r.left + r.width + 26, y = r.top - 10;
-    if (x + W > innerWidth - 16) x = r.left - W - 26;
-    if (x < 16) { x = Math.max(16, r.left); y = r.bottom + 20; }
-    if (y + 270 > innerHeight - 60) y = Math.max(64, r.top - 280);
-    t.style.left = Math.max(16, x) + 'px'; t.style.top = Math.max(60, y) + 'px';
   }
   function tourGo(i) {
     tourIdx = i; const d = TOUR[tourIdx];
@@ -1331,8 +1338,11 @@ body.tlock{overflow:hidden}
     const ring = $('#tring'), t = $('#ttext');
     t.hidden = false;
     ring.hidden = false;
-    ring.style.transition = 'none';
-    ring.style.opacity = 0;
+    if (d.v !== tourPrevV) {
+      ring.style.transition = 'none';
+      ring.style.opacity = 0;
+    }
+    tourPrevV = d.v;
     $('#ttext .tstep b').textContent = String(tourIdx + 1).padStart(2, '0');
     $('#ttext .tstep span').textContent = '/ ' + String(TOUR.length).padStart(2, '0');
     $('#ttext .tkick').textContent = d.kick;
@@ -1344,11 +1354,12 @@ body.tlock{overflow:hidden}
       else { clearInterval(tourType); sb.textContent = d.s; }
     }, 38);
     const show = () => {
-      if (!d.sel) { tourPlace(null); }
+      if (!d.sel) { ring.style.opacity = 0; tourPlace(null); }
       else {
         const el = document.querySelector(d.sel);
-        if (!el || !el.offsetParent) { tourGo((tourIdx + 1) % TOUR.length); return; }
-        try { el.scrollIntoView({block: 'nearest', behavior: 'smooth'}); } catch(e) {}
+        if (!el || !el.offsetParent) { ring.style.opacity = 0; tourPlace(null); }
+        else {
+          try { el.scrollIntoView({block: 'nearest', behavior: 'smooth'}); } catch(e) {}
           const r = el.getBoundingClientRect();
           ring.style.left = (r.left - 10) + 'px'; ring.style.top = (r.top - 10) + 'px';
           ring.style.width = (r.width + 20) + 'px'; ring.style.height = (r.height + 20) + 'px';
@@ -1356,6 +1367,7 @@ body.tlock{overflow:hidden}
           ring.style.transition = '';
           ring.style.opacity = 1;
           tourPlace(r);
+        }
       }
     };
     if (d.sel) tourShow = setTimeout(show, 650); else show();
