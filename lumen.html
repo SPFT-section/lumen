@@ -63,6 +63,7 @@ button:disabled{opacity:.38;cursor:not-allowed}
 .btn.warn{color:#ff9b9b;border-color:rgba(255,107,107,.25);background:transparent}
 .btn.warn:hover{background:rgba(255,107,107,.08)}
 .btn.sm{height:32px;padding:0 12px;font-size:12px;border-radius:10px}
+.btn.on{border-color:#fff}
 .eyebrow{margin:0 0 8px;font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--ink-3)}
 .field{display:flex;flex-direction:column;gap:7px;min-width:0}
 .field>label,.label{font-size:12px;color:var(--ink-3);letter-spacing:.04em}
@@ -100,7 +101,7 @@ button:disabled{opacity:.38;cursor:not-allowed}
 .cv-frame .c-in{text-align:center;align-items:center;padding:16cqw 14cqw 13cqw}
 .cv-image .c-bg::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.55),rgba(0,0,0,.05) 40%,rgba(0,0,0,.7))}
 .cv-glass .c-bg{background:radial-gradient(110% 60% at 50% 0%,hsl(var(--h) 50% 26%/.8),transparent 65%),#0a0a0d}
-.cv-glass .c-in{top:auto;bottom:0;height:23%;display:block;overflow:hidden;padding:3.5cqw 6cqw 11cqw;background:rgba(6,6,10,.75);backdrop-filter:blur(22px) saturate(150%);-webkit-backdrop-filter:blur(22px) saturate(150%)}
+.cv-glass .c-in{top:auto;bottom:0;height:23%;display:block;overflow:hidden;padding:3.5cqw 6cqw 11cqw;background:rgba(6,6,10,var(--glass,.75));backdrop-filter:blur(22px) saturate(150%);-webkit-backdrop-filter:blur(22px) saturate(150%)}
 .cv-glass .c-pill{display:inline-block;font-size:2.6cqw;letter-spacing:.26em;padding:1cqw 3cqw;border-radius:99px;border:1px solid rgba(255,255,255,.35);color:rgba(255,255,255,.85);margin-bottom:1.8cqw}
 .cv-glass .c-title{font-size:7.6cqw;line-height:1.35;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .cv-glass .c-tag{margin:1.2cqw 0 0;font-size:3.8cqw;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -374,6 +375,8 @@ button:disabled{opacity:.38;cursor:not-allowed}
           <div class="field"><label for="cTag">คำโปรย</label><input class="input" id="cTag" placeholder="ประโยคสั้น ๆ บนปก"></div>
           <div class="field"><span class="label">แนวทางหน้าปก</span><div class="row"><button class="btn sm" type="button" id="coverEditorial">Editorial · ตัวอักษรนำ</button><button class="btn sm" type="button" id="coverCinematic">Cinematic · ภาพนำ</button></div><p class="page-sub">เลือกแนวทางก่อน แล้วปรับลายปกและภาพได้ตามต้องการ</p><div class="styles" id="styleList"></div></div>
           <div class="field"><label for="cHue">โทนสี</label><div><div class="hue-track"></div><input class="range" type="range" min="0" max="360" id="cHue"></div></div>
+          <div class="field"><span class="label">ภาพพื้นหลัง</span><div class="row" id="sampleRow"><button class="btn sm" type="button" data-sample="sunset">อาทิตย์ตก</button><button class="btn sm" type="button" data-sample="ocean">ทะเล</button><button class="btn sm" type="button" data-sample="forest">ป่า</button></div></div>
+          <div class="field"><label for="cGlass">ความขุ่นกระจก (<span id="cGlassVal">75</span>%)</label><input class="range" type="range" min="30" max="95" value="75" id="cGlass"></div>
           <div class="row"><button class="btn" id="cUpload">อัปโหลดภาพปก</button><button class="btn ghost" id="cRemoveImg" hidden>ลบภาพปก</button><input type="file" id="cFile" accept="image/*" hidden></div>
         </div>
       </div>
@@ -596,7 +599,7 @@ button:disabled{opacity:.38;cursor:not-allowed}
   function blankNovel(title) {
     const t = Date.now();
     return {id:uid(), title:title || 'เรื่องไม่มีชื่อ', author:'', tagline:'', synopsis:'', genre:'', status:'writing', tags:'', target:0,
-      cover:{style:'glass', hue:210, image:'', mode:'editorial', v:3}, knowledge:[], chapters:[{id:uid(), title:'', content:'', updatedAt:t}], characters:[],
+      cover:{style:'glass', hue:210, image:'', mode:'editorial', v:3, glass:75, sample:''}, knowledge:[], chapters:[{id:uid(), title:'', content:'', updatedAt:t}], characters:[],
       createdAt:t, updatedAt:t, lastChapter:null, read:null};
   }
   function load() {
@@ -623,7 +626,7 @@ button:disabled{opacity:.38;cursor:not-allowed}
     lib.reader = Object.assign({theme:'dark', size:19}, lib.reader || {});
     lib.novels.forEach(n => {
       n.id = n.id || uid(); n.title = n.title || 'เรื่องไม่มีชื่อ';
-      n.cover = Object.assign({style:'glass', hue:210, image:'', mode:'editorial', v:0}, n.cover || {});
+      n.cover = Object.assign({style:'glass', hue:210, image:'', mode:'editorial', v:3, glass:75, sample:''}, n.cover || {});
       if (n.cover.v !== 3) {
         // v3 = original file stored as-is (no resize): discard older resized blobs
         n.cover.image = ''; n.cover.style = 'glass'; n.cover.v = 3;
@@ -708,9 +711,14 @@ button:disabled{opacity:.38;cursor:not-allowed}
     const cv = Object.assign({}, n.cover, over || {});
     const img = typeof cv.image === 'string' && cv.image.startsWith('data:image/') ? cv.image : '';
     const st = 'glass';
-    const bg = img ? ` style="background-image:url('${img}')"` : '';
+    const SAMPLES = {sunset:'linear-gradient(180deg,#2b1a4d,#b3402e 55%,#f0a35e)',ocean:'linear-gradient(180deg,#04121f,#0a4a5e 55%,#37b8a5)',forest:'linear-gradient(180deg,#07130c,#1d4a26 55%,#8fce6e)'};
+    let bgImg = '';
+    if (img) bgImg = `background-image:url('${img}')`;
+    else if (cv.sample && SAMPLES[cv.sample]) bgImg = `background-image:${SAMPLES[cv.sample]}`;
+    const bg = bgImg ? ` style="${bgImg}"` : '';
+    const glass = (typeof cv.glass === 'number' ? cv.glass : 75) / 100;
     let yr = ''; try { yr = new Date(n.createdAt).getFullYear() || ''; } catch(e) {}
-    return `<div class="cover cv-${st} cv-${cv.mode === 'cinematic' ? 'cinematic' : 'editorial'}" style="--h:${+cv.hue || 0}"><div class="c-bg"${bg}></div><div class="c-in"><span class="c-pill">✦ NOVEL</span><div class="c-title">${esc(n.title)}</div>${n.tagline ? `<p class="c-tag">${esc(n.tagline)}</p>` : ''}<div class="c-author"><span>${esc(n.author)}</span><span>${yr}</span></div></div></div>`;
+    return `<div class="cover cv-${st} cv-${cv.mode === 'cinematic' ? 'cinematic' : 'editorial'}" style="--h:${+cv.hue || 0};--glass:${glass}"><div class="c-bg"${bg}></div><div class="c-in"><span class="c-pill">✦ NOVEL</span><div class="c-title">${esc(n.title)}</div>${n.tagline ? `<p class="c-tag">${esc(n.tagline)}</p>` : ''}<div class="c-author"><span>${esc(n.author)}</span><span>${yr}</span></div></div></div>`;
   }
 
   /* ---------- navigation ---------- */
@@ -782,6 +790,7 @@ button:disabled{opacity:.38;cursor:not-allowed}
   function renderCover() {
     const n = N();
     $('#cTitle').value = n.title; $('#cAuthor').value = n.author; $('#cTag').value = n.tagline; $('#cHue').value = n.cover.hue;
+    $('#cGlass').value = (n.cover.glass == null ? 75 : n.cover.glass);
     refreshCover();
   }
   function refreshCover() {
@@ -791,7 +800,9 @@ button:disabled{opacity:.38;cursor:not-allowed}
     const hasImg = !!(n.cover.image && n.cover.image.startsWith('data:image/'));
     const styles = ['glass'];
     $('#styleList').innerHTML = styles.map(s => `<button class="style-opt${' on'}" data-s="${s}" title="กระจกล่าง">${coverHTML(n, {style:s})}</button>`).join('');
-    $('#cRemoveImg').hidden = !hasImg;
+    $('#cRemoveImg').hidden = !hasImg && !n.cover.sample;
+    $('#cGlassVal').textContent = (n.cover.glass == null ? 75 : n.cover.glass);
+    document.querySelectorAll('#sampleRow [data-sample]').forEach(b => b.classList.toggle('on', !hasImg && n.cover.sample === b.dataset.sample));
     $('#crumb').textContent = n.title;
   }
   function touchNovel() { const n = N(); if (n) n.updatedAt = Date.now(); schedulePersist(); }
@@ -801,13 +812,15 @@ button:disabled{opacity:.38;cursor:not-allowed}
   $('#coverEditorial').onclick = () => { N().cover.mode = 'editorial'; touchNovel(); refreshCover(); };
   $('#coverCinematic').onclick = () => { N().cover.mode = 'cinematic'; touchNovel(); refreshCover(); };
   $('#cHue').addEventListener('input', e => { const n = N(); n.cover.hue = +e.target.value; touchNovel(); refreshCover(); });
+  $('#cGlass').addEventListener('input', e => { const n = N(); n.cover.glass = +e.target.value; touchNovel(); refreshCover(); });
+  $('#sampleRow').addEventListener('click', e => { const b = e.target.closest('[data-sample]'); if (!b) return; const n = N(); n.cover.sample = b.dataset.sample; n.cover.image = ''; touchNovel(); refreshCover(); toast('เปลี่ยนภาพพื้นหลังแล้ว'); });
   $('#styleList').addEventListener('click', e => { const b = e.target.closest('[data-s]'); if (!b) return; N().cover.style = b.dataset.s; touchNovel(); refreshCover(); });
   $('#cUpload').onclick = () => $('#cFile').click();
-  $('#cRemoveImg').onclick = () => { const n = N(); n.cover.image = ''; if (n.cover.style === 'image') n.cover.style = 'aurora'; touchNovel(); refreshCover(); };
+  $('#cRemoveImg').onclick = () => { const n = N(); n.cover.image = ''; n.cover.sample = ''; touchNovel(); refreshCover(); };
   $('#cFile').onchange = async e => {
     const f = e.target.files[0]; e.target.value = ''; if (!f) return;
     try {
-      const data = await fileToCover(f); const n = N(); n.cover.image = data; n.cover.style = 'image';
+      const data = await fileToCover(f); const n = N(); n.cover.image = data; n.cover.sample = '';
       touchNovel(); refreshCover(); toast('ใส่ภาพปกแล้ว');
     } catch(err) { toast('เปิดไฟล์ภาพนี้ไม่ได้'); }
   };
