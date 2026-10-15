@@ -112,12 +112,6 @@ button:disabled{opacity:.38;cursor:not-allowed}
 .d-tag{margin:4px 0 0;color:rgba(255,255,255,.78);font-family:"Noto Serif Thai",serif;font-size:13px;line-height:1.6;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .d-ft{position:absolute;left:20px;right:20px;bottom:10px;display:flex;justify-content:space-between;align-items:center;gap:10px;border-top:1px solid rgba(255,255,255,.2);padding-top:7px;font-size:11px}
 .d-au{letter-spacing:.22em;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.cv-glass .c-bg{background:radial-gradient(110% 60% at 50% 0%,hsl(var(--h) 50% 26%/.8),transparent 65%),#0a0a0d}
-.cv-glass .c-in{top:auto;bottom:0;height:23%;display:block;overflow:hidden;padding:3.5cqw 6cqw 11cqw;background:rgba(6,6,10,var(--glass,.75));backdrop-filter:blur(22px) saturate(150%);-webkit-backdrop-filter:blur(22px) saturate(150%)}
-.cv-glass .c-pill{display:inline-block;font-size:2.6cqw;letter-spacing:.26em;padding:1cqw 3cqw;border-radius:99px;border:1px solid rgba(255,255,255,.35);color:rgba(255,255,255,.85);margin-bottom:1.8cqw}
-.cv-glass .c-title{font-size:7.6cqw;line-height:1.35;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-.cv-glass .c-tag{margin:1.2cqw 0 0;font-size:3.8cqw;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.cv-glass .c-author{position:absolute;left:6cqw;right:6cqw;bottom:2.6cqw;display:flex;justify-content:space-between;gap:3cqw;border-top:1px solid rgba(255,255,255,.2);padding-top:2cqw;font-size:3.2cqw;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 
 /* home */
 .home-actions{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
@@ -129,8 +123,13 @@ button:disabled{opacity:.38;cursor:not-allowed}
 .resume-t{font-family:var(--font-serif);font-size:18px;overflow-wrap:anywhere}
 .shelf{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:34px 24px;align-items:start}
 .book{display:flex;flex-direction:column;gap:12px;min-width:0}
-.book-cover{padding:0;border:0;background:transparent;border-radius:12px;transition:transform .25s ease}
+.book-cover{padding:0;border:0;background:transparent;border-radius:12px;transition:transform .25s ease;container-type:inline-size;display:block;width:100%}
 .book-cover:hover{transform:translateY(-5px) rotate(-.4deg)}
+.book-cover .d-sheet{padding:3.5cqw 5.9cqw 10.6cqw}
+.book-cover .d-pill{font-size:2.6cqw;padding:.9cqw 2.9cqw;margin-bottom:1.8cqw}
+.book-cover .d-title{font-size:7.6cqw}
+.book-cover .d-tag{font-size:3.8cqw;margin-top:1.2cqw}
+.book-cover .d-ft{left:5.9cqw;right:5.9cqw;bottom:2.9cqw;padding-top:2cqw;font-size:3.2cqw}
 .book-title{font-family:var(--font-serif);font-size:15px;line-height:1.5;overflow-wrap:anywhere}
 .book-sub{font-size:12px;color:var(--ink-3);margin:3px 0 8px}
 .book-act{display:flex;gap:6px;margin-top:10px}
@@ -722,19 +721,17 @@ button:disabled{opacity:.38;cursor:not-allowed}
     if (!e.target.closest('#fontMenu') && !e.target.closest('#fontBtn') && !e.target.closest('#typeBtn')) $('#fontMenu').classList.remove('show');
   });
 
-  /* ---------- covers ---------- */
-  function coverHTML(n, over) {
-    const cv = Object.assign({}, n.cover, over || {});
+  /* ---------- covers (same D display as cover page, scaled for shelf) ---------- */
+  function coverHTML(n) {
+    const cv = n.cover || {};
     const img = typeof cv.image === 'string' && cv.image.startsWith('data:image/') ? cv.image : '';
-    const st = 'glass';
-    const SAMPLES = {sunset:'linear-gradient(180deg,#2b1a4d,#b3402e 55%,#f0a35e)',ocean:'linear-gradient(180deg,#04121f,#0a4a5e 55%,#37b8a5)',forest:'linear-gradient(180deg,#07130c,#1d4a26 55%,#8fce6e)'};
-    let bgImg = '';
-    if (img) bgImg = `background-image:url('${img}')`;
-    else if (cv.sample && SAMPLES[cv.sample]) bgImg = `background-image:${SAMPLES[cv.sample]}`;
-    const bg = bgImg ? ` style="${bgImg}"` : '';
+    const SAMPLES = {sunset:1, ocean:1, forest:1};
+    let bgCls = 'd-bg', bgSt = '';
+    if (img) bgSt = ` style="background-image:url('${img}')"`;
+    else bgCls += ' ' + (cv.sample && SAMPLES[cv.sample] ? cv.sample : 'sunset');
     const glass = (typeof cv.glass === 'number' ? cv.glass : 75) / 100;
     let yr = ''; try { yr = new Date(n.createdAt).getFullYear() || ''; } catch(e) {}
-    return `<div class="cover cv-${st} cv-${cv.mode === 'cinematic' ? 'cinematic' : 'editorial'}" style="--h:${+cv.hue || 0};--glass:${glass}"><div class="c-bg"${bg}></div><div class="c-in"><span class="c-pill">✦ NOVEL</span><div class="c-title">${esc(n.title)}</div>${n.tagline ? `<p class="c-tag">${esc(n.tagline)}</p>` : ''}<div class="c-author"><span>${esc(n.author)}</span><span>${yr}</span></div></div></div>`;
+    return `<div class="d-cv"><div class="${bgCls}"${bgSt}></div><div class="d-sheet" style="--glass:${glass}"><span class="d-pill">✦ NOVEL</span><div class="d-title">${esc(n.title)}</div>${n.tagline ? `<p class="d-tag">${esc(n.tagline)}</p>` : ''}<div class="d-ft"><span class="d-au">${esc(n.author)}</span><span>${yr}</span></div></div></div>`;
   }
 
   /* ---------- navigation ---------- */
