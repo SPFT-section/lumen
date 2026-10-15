@@ -300,11 +300,12 @@ body.tlock{overflow:hidden}
 #ttext{position:fixed;z-index:202;pointer-events:none;max-width:min(300px,calc(100vw - 40px));text-shadow:0 2px 16px #000;transition:left .8s cubic-bezier(.22,1,.36,1),top .8s cubic-bezier(.22,1,.36,1),opacity .45s}
 #ttext .tstep{display:inline-flex;align-items:center;gap:8px;padding:4px 11px;border-radius:99px;background:rgba(18,18,22,.72);border:1px solid var(--line-2);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);font-size:10px;letter-spacing:.24em;color:var(--ink)}
 #ttext .tstep b{color:var(--warn);font-weight:600}
-#ttext .tkick{margin:8px 0 4px;font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--warn)}
-#ttext h3{font-family:var(--font-serif);font-weight:400;font-size:22px;line-height:1.5;margin:0;min-height:3em}
+#ttext .trow1{display:flex;align-items:center;gap:10px;margin-bottom:6px}
+#ttext .tkick{font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--warn)}
+#ttext h3{font-family:var(--font-serif);font-weight:400;font-size:22px;line-height:1.5;margin:0;min-height:1.5em}
 #ttext .tcaret{display:inline-block;width:2px;height:1em;background:#fff;vertical-align:-2px;animation:tblink 1s steps(1) infinite}
 @keyframes tblink{50%{opacity:0}}
-#ttext .tsub{color:#cfcfcf;font-size:13px;line-height:1.8;margin:2px 0 0;min-height:3.6em}
+#ttext .tsub{color:#cfcfcf;font-size:13px;line-height:1.8;margin:2px 0 0;min-height:1.8em}
 #tbar{position:fixed;top:0;left:0;height:3px;background:#fff;z-index:203;width:0;transition:width .6s ease}
 .view:not([hidden]){animation:tviewin .32s cubic-bezier(.22,1,.36,1)}
 @keyframes tviewin{from{opacity:0;transform:translateY(12px)}}
@@ -605,7 +606,7 @@ body.tlock{overflow:hidden}
 
 <div class="toast" id="toast"></div>
 <div id="tshade"></div><div id="tring" hidden></div>
-<div id="ttext" hidden><div class="tstep"><b>01</b><span>/ 17</span></div><div class="tkick"></div><h3><span class="th"></span><span class="tcaret"></span></h3><p class="tsub"></p></div>
+<div id="ttext" hidden><div class="trow1"><span class="tstep"><b>01</b><span>/ 18</span></span><span class="tkick"></span></div><h3><span class="th"></span><span class="tcaret"></span></h3><p class="tsub"></p></div>
 <div id="tbar"></div><button id="tskip">ข้าม ✕</button>
 <input type="file" id="fileInput" accept=".txt,.html,.htm" hidden>
 
