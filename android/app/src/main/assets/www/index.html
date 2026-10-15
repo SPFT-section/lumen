@@ -1302,8 +1302,9 @@ body.tlock{overflow:hidden}
       return;
     }
     const x = Math.min(Math.max(16, r.left), innerWidth - W - 16);
+    const th = t.offsetHeight || 270;
     let y = r.bottom + 14;
-    if (y + 270 > innerHeight - 40) y = Math.max(64, r.top - 280);
+    if (y + th > innerHeight - 40) y = Math.max(64, r.top - th - 14);
     t.style.left = x + 'px'; t.style.top = Math.max(60, y) + 'px';
   }
   function ensureTourNovel() {
