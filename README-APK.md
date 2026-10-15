@@ -1,5 +1,10 @@
 # LUMEN Writing Studio → APK
 
+> ## ⬇️ Download APK
+> **https://github.com/SPFT-section/lumen/releases/latest/download/lumen-studio.apk**
+>
+> Install on Android (allow unknown apps for debug build).
+
 `lumen.html` is the single-file web app. `android/` is a zero-dependency
 native WebView wrapper (`com.lumen.studio`) that loads it from assets.
 

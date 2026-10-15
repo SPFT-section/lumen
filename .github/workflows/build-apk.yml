@@ -8,6 +8,8 @@ on:
 jobs:
   apk:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     env:
       ANDROID_HOME: /usr/local/lib/android/sdk
       ANDROID_SDK_ROOT: /usr/local/lib/android/sdk
@@ -58,3 +60,11 @@ jobs:
         with:
           name: lumen-studio-apk
           path: lumen-studio.apk
+
+      - name: Publish to Release (stable download link)
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: latest
+          name: Latest APK
+          body: "Auto-built debug APK from master. Download below."
+          files: lumen-studio.apk
