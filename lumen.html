@@ -595,7 +595,7 @@ button:disabled{opacity:.38;cursor:not-allowed}
   function blankNovel(title) {
     const t = Date.now();
     return {id:uid(), title:title || 'เรื่องไม่มีชื่อ', author:'', tagline:'', synopsis:'', genre:'', status:'writing', tags:'', target:0,
-      cover:{style:'glass', hue:210, image:'', mode:'editorial', v:2}, knowledge:[], chapters:[{id:uid(), title:'', content:'', updatedAt:t}], characters:[],
+      cover:{style:'glass', hue:210, image:'', mode:'editorial', v:3}, knowledge:[], chapters:[{id:uid(), title:'', content:'', updatedAt:t}], characters:[],
       createdAt:t, updatedAt:t, lastChapter:null, read:null};
   }
   function load() {
@@ -623,9 +623,9 @@ button:disabled{opacity:.38;cursor:not-allowed}
     lib.novels.forEach(n => {
       n.id = n.id || uid(); n.title = n.title || 'เรื่องไม่มีชื่อ';
       n.cover = Object.assign({style:'glass', hue:210, image:'', mode:'editorial', v:0}, n.cover || {});
-      if (n.cover.v !== 2) {
-        // v2 = EXIF-aware resize: discard images stored by the old pipeline (may be stretched)
-        n.cover.image = ''; n.cover.style = 'glass'; n.cover.v = 2;
+      if (n.cover.v !== 3) {
+        // v3 = original file stored as-is (no resize): discard older resized blobs
+        n.cover.image = ''; n.cover.style = 'glass'; n.cover.v = 3;
       }
       n.cover.mode = n.cover.mode === 'cinematic' ? 'cinematic' : 'editorial';
       n.knowledge = Array.isArray(n.knowledge) ? n.knowledge : [];
@@ -810,34 +810,12 @@ button:disabled{opacity:.38;cursor:not-allowed}
     } catch(err) { toast('เปิดไฟล์ภาพนี้ไม่ได้'); }
   };
   function fileToCover(file) {
-    // EXIF-orientation aware: createImageBitmap rotates per EXIF so portraits
-    // from phones don't come out stretched; then center-crop to 2:3.
+    // Store the original file as-is (no canvas resize: resizing caused distortion bugs).
+    // CSS background-size:cover handles fitting without ever stretching.
     return new Promise((res, rej) => {
-      const W = 600, H = 900;
-      const finish = (src, iw, ih) => {
-        try {
-          const cv = document.createElement('canvas'); cv.width = W; cv.height = H;
-          const cx = cv.getContext('2d');
-          const s = Math.max(W / iw, H / ih), w = iw * s, h = ih * s;
-          cx.drawImage(src, (W - w) / 2, (H - h) / 2, w, h);
-          if (src && src.close) { try { src.close(); } catch(e) {} }
-          res(cv.toDataURL('image/jpeg', .82));
-        } catch(err) { rej(err); }
-      };
-      if ('createImageBitmap' in window) {
-        createImageBitmap(file, {imageOrientation: 'from-image'}).then(
-          bmp => finish(bmp, bmp.width, bmp.height),
-          () => legacyLoad());
-      } else { legacyLoad(); }
-      function legacyLoad() {
-        const fr = new FileReader();
-        fr.onload = () => {
-          const im = new Image();
-          im.onload = () => finish(im, im.naturalWidth, im.naturalHeight);
-          im.onerror = rej; im.src = fr.result;
-        };
-        fr.onerror = rej; fr.readAsDataURL(file);
-      }
+      const fr = new FileReader();
+      fr.onload = () => res(fr.result);
+      fr.onerror = rej; fr.readAsDataURL(file);
     });
   }
   $('#coverRead').onclick = () => go('read');
