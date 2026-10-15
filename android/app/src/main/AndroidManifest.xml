@@ -4,6 +4,10 @@
     <!-- Needed for Google Fonts used by LUMEN -->
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <!-- File picker uses Storage Access Framework (no permission needed),
+         these cover WebView file:// fallback on older devices -->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" android:maxSdkVersion="32" />
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
 
     <application
         android:label="@string/app_name"
