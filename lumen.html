@@ -286,6 +286,21 @@ button:disabled{opacity:.38;cursor:not-allowed}
 .menu-sep{height:1px;background:var(--line);margin:6px 4px}
 .toast{position:fixed;z-index:100;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translate(-50%,20px);opacity:0;padding:10px 16px;border-radius:12px;background:#171717;border:1px solid var(--line-2);color:#ddd;font-size:13px;transition:.2s;pointer-events:none;max-width:calc(100vw - 32px)}
 .toast.show{opacity:1;transform:translate(-50%,0)}
+/* guided tour (minimal, no boxes) */
+body.tlock{overflow:hidden}
+#tshade{position:fixed;inset:0;background:rgba(0,0,0,.74);z-index:200;opacity:0;pointer-events:none;transition:opacity .4s}
+#tshade.on{opacity:1;pointer-events:auto}
+#tring{position:fixed;border:2px solid #fff;border-radius:14px;box-shadow:0 0 0 6px rgba(255,255,255,.12),0 0 34px rgba(255,255,255,.3);z-index:201;pointer-events:none;transition:all .5s cubic-bezier(.2,.8,.2,1);animation:tringp 1.6s ease-in-out infinite}
+@keyframes tringp{50%{box-shadow:0 0 0 10px rgba(255,255,255,.06),0 0 44px rgba(255,255,255,.4)}}
+#ttext{position:fixed;z-index:202;pointer-events:none;max-width:min(320px,calc(100vw - 40px));text-shadow:0 2px 16px #000}
+#ttext .tkick{font-size:11px;letter-spacing:.3em;color:var(--ok);margin-bottom:8px}
+#ttext h3{font-family:var(--font-serif);font-weight:500;font-size:24px;line-height:1.55;margin:0}
+#ttext .tcaret{display:inline-block;width:2px;height:1em;background:#fff;vertical-align:-2px;animation:tblink 1s steps(1) infinite}
+@keyframes tblink{50%{opacity:0}}
+#ttext .tsub{color:#cfcfcf;font-size:13px;line-height:1.8;margin:8px 0 0}
+#tbar{position:fixed;top:0;left:0;height:3px;background:#fff;z-index:203;width:0;transition:width .4s}
+#tskip{position:fixed;top:12px;right:14px;z-index:204;background:rgba(20,20,24,.85);border:1px solid var(--line-2);color:var(--ink);border-radius:99px;padding:8px 16px;font-size:13px;display:none}
+#tourBtn{font-size:18px;font-weight:600}
 
 @media(max-width:820px){
   .cover-grid{grid-template-columns:minmax(0,1fr);gap:28px}
@@ -337,6 +352,7 @@ button:disabled{opacity:.38;cursor:not-allowed}
   <button class="icon-btn" id="focusTop" title="โหมดโฟกัส" hidden>
     <svg class="icon" viewBox="0 0 24 24"><path d="M8 3H5a2 2 0 0 0-2 2v3M16 3h3a2 2 0 0 1 2 2v3M8 21H5a2 2 0 0 1-2-2v-3M16 21h3a2 2 0 0 0 2-2v-3"/></svg>
   </button>
+  <button class="icon-btn" id="tourBtn" title="บทช่วยสอน">?</button>
   <button class="icon-btn" id="settingsBtn" title="ตั้งค่า">
     <svg class="icon" viewBox="0 0 24 24"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2"/><circle cx="8" cy="17" r="2"/></svg>
   </button>
@@ -579,6 +595,9 @@ button:disabled{opacity:.38;cursor:not-allowed}
 </div>
 
 <div class="toast" id="toast"></div>
+<div id="tshade"></div><div id="tring" hidden></div>
+<div id="ttext" hidden><div class="tkick"></div><h3><span class="th"></span><span class="tcaret"></span></h3><p class="tsub"></p></div>
+<div id="tbar"></div><button id="tskip">ข้าม ✕</button>
 <input type="file" id="fileInput" accept=".txt,.html,.htm" hidden>
 
 <script>
@@ -1243,7 +1262,98 @@ button:disabled{opacity:.38;cursor:not-allowed}
     }
   });
 
+  /* ---------- guided tour (first run + ? button) ---------- */
+  const TOUR_KEY = 'lumen_tour_v1';
+  const TOUR = [
+    {v:null, kick:'ยินดีต้อนรับสู่ LUMEN', h:'ทัวร์สั้นๆ ทุกฟังก์ชัน', s:'หน้าจอจะล็อกระหว่างทัวร์ จบแล้วใช้งานได้ปกติ', bar:6},
+    {v:'home', sel:'#newNovel', kick:'1 · หน้าแรก', h:'เริ่มเรื่องใหม่ตรงนี้', s:'ตั้งชื่อแล้วเริ่มบทแรกได้ทันที', bar:18},
+    {v:'home', sel:'.book-cover', kick:'2 · หน้าแรก', h:'ปกทุกเล่มอยู่บนชั้นนี้', s:'แตะปกเพื่อเปิดอ่านหรือเขียนต่อ', bar:30},
+    {v:'cover', sel:'#cUpload', kick:'3 · หน้าปก', h:'อัปโหลดภาพปก', s:'เก็บไฟล์ต้นฉบับ ไม่ย่อ ไม่ยืด', bar:42},
+    {v:'cover', sel:'#cGlass', kick:'4 · หน้าปก', h:'ความขุ่นกระจก', s:'เลื่อนปรับความทึบของแผ่นกระจก 30–95%', bar:52},
+    {v:'story', sel:'#sSynopsis', kick:'5 · หน้าเรื่อง', h:'เล่าเรื่องย่อไว้ตรงนี้', s:'แนว แท็ก เป้าหมายจำนวนคำอยู่หน้านี้', bar:63},
+    {v:'chapters', sel:'#addChapter', kick:'6 · หน้าบท', h:'เพิ่มบทใหม่ไม่จำกัด', s:'แตะชื่อบทเพื่อเขียนต่อได้ทันที', bar:73},
+    {v:'write', sel:'#editor', kick:'7 · หน้าเขียน', h:'พื้นที่เขียนของคุณ', s:'ตัวหนา เอียง อ้างอิง นับคำอัตโนมัติ', bar:83},
+    {v:'read', sel:'#rTheme', kick:'8 · หน้าอ่าน', h:'อ่านสบายทุกธีม', s:'มืด ซีเปีย ขาว ปรับขนาดอักษรได้', bar:91},
+    {v:'read', modal:'settings', sel:'#backupMake', kick:'9 · ตั้งค่า', h:'สำรองข้อมูลเสมอ', s:'สร้างข้อมูลสำรองเก็บไว้อีกที่ได้', bar:96},
+    {v:null, kick:'จบแล้ว', h:'พร้อมเขียนเรื่องแรก', s:'กด ? มุมขวาบนดูทัวร์ซ้ำได้ตลอด', bar:100}
+  ];
+  let tourIdx = -1, tourTimer = null, tourType = null, tourNovel = null;
+  function ensureTourNovel() {
+    const sorted = lib.novels.slice().sort((a, b) => b.updatedAt - a.updatedAt);
+    if (sorted.length) return sorted[0].id;
+    const n = blankNovel('เรื่องตัวอย่าง');
+    n.author = 'LUMEN'; n.tagline = 'ลองแต่งปกและเขียนบทแรกได้เลย';
+    n.cover.sample = 'sunset';
+    n.chapters[0].title = 'บทแรก';
+    n.chapters[0].content = '<p>แสงสุดท้ายของวันลับขอบฟ้าไปแล้ว… เรื่องราวของเราจึงเริ่มต้นขึ้นตรงนี้</p>';
+    n.lastChapter = n.chapters[0].id;
+    lib.novels.push(n); schedulePersist();
+    return n.id;
+  }
+  function tourPlace(r) {
+    const t = $('#ttext');
+    let x = Math.max(20, (innerWidth - 360) / 2), y = innerHeight / 2 - 120;
+    if (r) {
+      const below = innerHeight - r.bottom - 20, above = r.top - 20;
+      y = (below > 200 || below > above) ? (r.bottom + 18) : Math.max(64, r.top - 200);
+      x = Math.min(Math.max(20, r.left), innerWidth - 340);
+    }
+    t.style.left = x + 'px'; t.style.top = Math.max(60, y) + 'px';
+  }
+  function tourGo(i) {
+    tourIdx = i; const d = TOUR[tourIdx];
+    document.body.classList.add('tlock');
+    $('#tshade').classList.add('on'); $('#tskip').style.display = 'block';
+    closeSettings();
+    if (d.v) go(d.v, {novel: tourNovel});
+    if (d.modal === 'settings') openSettings();
+    $('#tbar').style.width = d.bar + '%';
+    const ring = $('#tring'), t = $('#ttext');
+    t.hidden = false;
+    $('#ttext .tkick').textContent = d.kick;
+    const sb = $('#ttext .tsub'); sb.textContent = '';
+    clearInterval(tourType);
+    const h = $('#ttext .th'); h.textContent = ''; let c = 0;
+    tourType = setInterval(() => {
+      if (c < d.h.length) { h.textContent += d.h[c++]; }
+      else { clearInterval(tourType); sb.textContent = d.s; }
+    }, 45);
+    const show = () => {
+      if (!d.sel) { ring.hidden = true; tourPlace(null); }
+      else {
+        const el = document.querySelector(d.sel);
+        if (!el) { ring.hidden = true; tourPlace(null); }
+        else {
+          try { el.scrollIntoView({block: 'center'}); } catch(e) {}
+          const r = el.getBoundingClientRect();
+          ring.hidden = false;
+          ring.style.left = (r.left - 10) + 'px'; ring.style.top = (r.top - 10) + 'px';
+          ring.style.width = (r.width + 20) + 'px'; ring.style.height = (r.height + 20) + 'px';
+          tourPlace(r);
+        }
+      }
+    };
+    if (d.sel) setTimeout(show, 380); else show();
+    clearTimeout(tourTimer);
+    const last = tourIdx === TOUR.length - 1;
+    tourTimer = setTimeout(() => { if (last) tourEnd(); else tourGo(tourIdx + 1); }, last ? 6000 : 4600);
+  }
+  function tourEnd() {
+    clearTimeout(tourTimer); clearInterval(tourType);
+    try { closeSettings(); } catch(e) {}
+    $('#tshade').classList.remove('on'); $('#tring').hidden = true;
+    $('#ttext').hidden = true; $('#tskip').style.display = 'none';
+    document.body.classList.remove('tlock');
+    try { localStorage.setItem(TOUR_KEY, '1'); } catch(e) {}
+    go('home', {novel: tourNovel});
+    toast('จบบทช่วยสอน กด ? ดูซ้ำได้ตลอด');
+  }
+  function startTour() { tourNovel = ensureTourNovel(); tourGo(0); }
+  $('#tourBtn').onclick = startTour;
+  $('#tskip').onclick = tourEnd;
+
   go('home');
+  try { if (!localStorage.getItem(TOUR_KEY)) setTimeout(startTour, 700); } catch(e) {}
 })();
 </script>
 
