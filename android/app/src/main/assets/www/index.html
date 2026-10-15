@@ -599,7 +599,7 @@ button:disabled{opacity:.38;cursor:not-allowed}
   function blankNovel(title) {
     const t = Date.now();
     return {id:uid(), title:title || 'เรื่องไม่มีชื่อ', author:'', tagline:'', synopsis:'', genre:'', status:'writing', tags:'', target:0,
-      cover:{style:'glass', hue:210, image:'', mode:'editorial', v:3, glass:75, sample:''}, knowledge:[], chapters:[{id:uid(), title:'', content:'', updatedAt:t}], characters:[],
+      cover:{style:'glass', hue:210, image:'', mode:'editorial', v:4, glass:75, sample:''}, knowledge:[], chapters:[{id:uid(), title:'', content:'', updatedAt:t}], characters:[],
       createdAt:t, updatedAt:t, lastChapter:null, read:null};
   }
   function load() {
@@ -627,9 +627,9 @@ button:disabled{opacity:.38;cursor:not-allowed}
     lib.novels.forEach(n => {
       n.id = n.id || uid(); n.title = n.title || 'เรื่องไม่มีชื่อ';
       n.cover = Object.assign({style:'glass', hue:210, image:'', mode:'editorial', v:3, glass:75, sample:''}, n.cover || {});
-      if (n.cover.v !== 3) {
-        // v3 = original file stored as-is (no resize): discard older resized blobs
-        n.cover.image = ''; n.cover.style = 'glass'; n.cover.v = 3;
+      if (n.cover.v !== 4) {
+        // v4 = D pipeline (original file + CSS cover only): clear anything stored before
+        n.cover.image = ''; n.cover.style = 'glass'; n.cover.v = 4;
       }
       n.cover.mode = n.cover.mode === 'cinematic' ? 'cinematic' : 'editorial';
       n.knowledge = Array.isArray(n.knowledge) ? n.knowledge : [];
