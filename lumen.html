@@ -595,7 +595,7 @@ button:disabled{opacity:.38;cursor:not-allowed}
   function blankNovel(title) {
     const t = Date.now();
     return {id:uid(), title:title || 'เรื่องไม่มีชื่อ', author:'', tagline:'', synopsis:'', genre:'', status:'writing', tags:'', target:0,
-      cover:{style:'aurora', hue:210, image:'', mode:'editorial'}, knowledge:[], chapters:[{id:uid(), title:'', content:'', updatedAt:t}], characters:[],
+      cover:{style:'glass', hue:210, image:'', mode:'editorial', v:2}, knowledge:[], chapters:[{id:uid(), title:'', content:'', updatedAt:t}], characters:[],
       createdAt:t, updatedAt:t, lastChapter:null, read:null};
   }
   function load() {
@@ -622,7 +622,11 @@ button:disabled{opacity:.38;cursor:not-allowed}
     lib.reader = Object.assign({theme:'dark', size:19}, lib.reader || {});
     lib.novels.forEach(n => {
       n.id = n.id || uid(); n.title = n.title || 'เรื่องไม่มีชื่อ';
-      n.cover = Object.assign({style:'aurora', hue:210, image:'', mode:'editorial'}, n.cover || {});
+      n.cover = Object.assign({style:'glass', hue:210, image:'', mode:'editorial', v:0}, n.cover || {});
+      if (n.cover.v !== 2) {
+        // v2 = EXIF-aware resize: discard images stored by the old pipeline (may be stretched)
+        n.cover.image = ''; n.cover.style = 'glass'; n.cover.v = 2;
+      }
       n.cover.mode = n.cover.mode === 'cinematic' ? 'cinematic' : 'editorial';
       n.knowledge = Array.isArray(n.knowledge) ? n.knowledge : [];
       n.knowledge.forEach(k => { k.id = k.id || uid(); k.category = k.category || 'lore'; k.title = k.title || 'ไม่มีชื่อ'; k.body = k.body || ''; k.summary = k.summary || ''; k.tags = k.tags || ''; k.links = Array.isArray(k.links) ? k.links : []; });
