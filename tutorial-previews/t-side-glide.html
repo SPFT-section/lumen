@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="th"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Side text + glide ring (preview — ยังไม่เข้า app)</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@300;400;500;600&family=Noto+Serif+Thai:wght@400;500;600&display=swap">
+<style>
+*{box-sizing:border-box}body{margin:0;background:#070707;color:#f2f2ef;font-family:"IBM Plex Sans Thai",system-ui,sans-serif;overflow:hidden}
+.stage{position:relative;height:100vh;max-width:900px;margin:0 auto}
+.view{position:absolute;inset:0;padding:70px 24px 40px;transition:opacity .5s}
+.view.off{opacity:0;pointer-events:none}
+.topbar{display:flex;align-items:center;gap:10px;padding:12px 0;letter-spacing:.3em;font-size:14px}
+.btn{height:42px;padding:0 20px;border-radius:12px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.05);color:#fff;font-size:14px}
+.btn.primary{background:#f0f0ed;color:#0b0b0b}
+.hero{margin:26px 0;display:flex;gap:14px;flex-wrap:wrap;align-items:center}
+.d-cv{width:170px;aspect-ratio:2/3;border-radius:8px;overflow:hidden;position:relative;background:linear-gradient(180deg,#2b1a4d,#b3402e 60%,#f0a35e)}
+.field{margin:16px 0;max-width:420px}.field label{display:block;font-size:12px;color:#999;margin-bottom:6px}
+.input{width:100%;background:#000;border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:11px 12px;color:#fff}
+.prose{font-family:"Noto Serif Thai",serif;font-size:19px;line-height:2.05;color:#e9e9e6;max-width:600px}
+#shade{position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:50;pointer-events:auto}
+#ring{position:fixed;z-index:51;pointer-events:none;border:2px solid #fff;border-radius:16px;
+ box-shadow:0 0 0 6px rgba(255,255,255,.12),0 0 34px rgba(255,255,255,.3);
+ transition:left .8s cubic-bezier(.22,1,.36,1),top .8s cubic-bezier(.22,1,.36,1),width .8s cubic-bezier(.22,1,.36,1),height .8s cubic-bezier(.22,1,.36,1),opacity .45s;
+ animation:rp 1.8s ease-in-out infinite}
+@keyframes rp{50%{box-shadow:0 0 0 10px rgba(255,255,255,.06),0 0 46px rgba(255,255,255,.42)}}
+/* new T1 side style */
+#ttext{position:fixed;z-index:52;pointer-events:none;max-width:300px;
+ transition:left .8s cubic-bezier(.22,1,.36,1),top .8s cubic-bezier(.22,1,.36,1),opacity .45s;text-shadow:0 2px 16px #000}
+#ttext .num{font-family:"Noto Serif Thai",serif;font-size:52px;line-height:1;color:rgba(255,255,255,.16)}
+#ttext .kick{font-size:11px;letter-spacing:.32em;color:#8fd0a4;margin:6px 0 8px;display:flex;align-items:center;gap:8px}
+#ttext .kick::after{content:"";width:34px;height:1px;background:#8fd0a4;opacity:.6}
+#ttext h3{font-family:"Noto Serif Thai",serif;font-weight:500;font-size:25px;line-height:1.55;margin:0;min-height:2.6em}
+#ttext .caret{display:inline-block;width:2px;height:1em;background:#fff;vertical-align:-2px;animation:bl 1s steps(1) infinite}
+@keyframes bl{50%{opacity:0}}
+#ttext p{color:#c9c9c9;font-size:13px;line-height:1.8;margin:8px 0 0}
+#bar{position:fixed;top:0;left:0;height:3px;background:#fff;z-index:53;width:0;transition:width .6s ease}
+#skip{position:fixed;top:12px;right:14px;z-index:54;background:rgba(20,20,24,.85);border:1px solid rgba(255,255,255,.2);color:#fff;border-radius:99px;padding:8px 16px;font-size:13px}
+#again{text-align:center;color:#666;font-size:12px;position:fixed;bottom:12px;left:0;right:0;z-index:54}
+#again button{background:none;border:1px solid #333;color:#999;border-radius:8px;padding:4px 12px;font-size:12px}
+</style></head><body>
+<div class="stage">
+<section class="view" id="v-home"><div class="topbar">◈ LUMEN</div>
+<div class="hero"><button class="btn primary" id="t-new">＋ เริ่มเรื่องใหม่</button><button class="btn" id="t-open">เปิดชั้นหนังสือ</button></div>
+<div style="display:flex;gap:16px"><div class="d-cv" id="t-book"></div><div class="d-cv" style="filter:hue-rotate(140deg)"></div></div></section>
+<section class="view off" id="v-cover"><div class="topbar">◈ ออกแบบปก</div>
+<div class="hero"><div class="d-cv" style="width:200px" id="t-cv"></div></div>
+<div class="field"><label>ชื่อเรื่อง</label><input class="input" value="ราตรีแห่งดวงดาว"></div>
+<button class="btn" id="t-up">อัปโหลดภาพปก</button></section>
+<section class="view off" id="v-write"><div class="topbar">◈ เขียน · บทที่ 1</div>
+<div class="prose" id="t-ed">แสงสุดท้ายของวันลับขอบฟ้าไปแล้ว… เรื่องราวของเราจึงเริ่มต้นขึ้นตรงนี้</div></section>
+</div>
+<div id="shade"></div><div id="ring" style="opacity:0"></div>
+<div id="ttext"><div class="num">01</div><div class="kick"></div><h3><span class="ht"></span><span class="caret"></span></h3><p class="sb"></p></div>
+<div id="bar"></div><button id="skip">ข้าม ✕</button>
+<div id="again">พรีวิวสไตล์ใหม่ (ยังไม่เข้า app) <button id="replay">ดูใหม่</button></div>
+<script>
+const $=s=>document.querySelector(s);
+const STEPS=[
+ {v:'home',sel:'#t-new',num:'01',kick:'หน้าแรก',h:'เริ่มเรื่องใหม่ตรงนี้',s:'ตั้งชื่อแล้วเริ่มบทแรกได้ทันที',bar:'20%'},
+ {v:'home',sel:'#t-book',num:'02',kick:'หน้าแรก',h:'ปกทุกเล่มอยู่บนชั้นนี้',s:'แตะปกเพื่อเปิดอ่านหรือเขียนต่อ',bar:'40%'},
+ {v:'cover',sel:'#t-up',num:'03',kick:'หน้าปก',h:'อัปโหลดภาพปก',s:'ไฟล์ต้นฉบับล้วน ไม่ย่อ ไม่ยืด',bar:'60%'},
+ {v:'cover',sel:'#t-cv',num:'04',kick:'หน้าปก',h:'ตัวอย่างปกสดๆ',s:'ปรับกระจกแล้วเห็นผลทันทีตรงนี้',bar:'75%'},
+ {v:'write',sel:'#t-ed',num:'05',kick:'หน้าเขียน',h:'พื้นที่เขียนของคุณ',s:'พิมพ์ได้เลย นับคำอัตโนมัติ',bar:'90%'},
+ {v:null,num:'✦',kick:'จบแล้ว',h:'พร้อมเขียนเรื่องแรก',s:'สไตล์นี้โอเคไหม ถ้าใช่จะเอาเข้าแอปจริง',bar:'100%'}];
+let idx=0,timer=null,typer=null;
+function show(v){document.querySelectorAll('.view').forEach(x=>x.classList.toggle('off',x.id!=='v-'+v));}
+function side(r){
+ const t=$('#ttext');const W=300;
+ let x=r.left+r.width+26,y=r.top-10;
+ if(x+W>innerWidth-16){x=r.left-W-26;}
+ if(x<16){x=Math.max(16,r.left);y=r.bottom+20;}
+ if(y+t.offsetHeight>innerHeight-60){y=Math.max(70,r.top-t.offsetHeight-16);}
+ t.style.left=Math.max(16,x)+'px';t.style.top=Math.max(60,y)+'px';}
+function go(i){idx=(i+STEPS.length)%STEPS.length;const d=STEPS[idx];
+ if(d.v)show(d.v);
+ $('#bar').style.width=d.bar;
+ const ring=$('#ring');
+ $('#ttext .num').textContent=d.num;$('#ttext .kick').textContent=d.kick;
+ const sb=$('#ttext .sb');sb.textContent='';
+ clearInterval(typer);const h=$('#ttext .ht');h.textContent='';let c=0;
+ typer=setInterval(()=>{if(c<d.h.length){h.textContent+=d.h[c++];}else{clearInterval(typer);sb.textContent=d.s;}},38);
+ if(!d.sel){ring.style.opacity=0;}
+ else{const el=$(d.sel);const r=el.getBoundingClientRect();
+  ring.style.opacity=1;
+  ring.style.left=(r.left-12)+'px';ring.style.top=(r.top-12)+'px';
+  ring.style.width=(r.width+24)+'px';ring.style.height=(r.height+24)+'px';
+  side({left:r.left-12,top:r.top-12,bottom:r.top-12+r.height+24,width:r.width+24});}
+ clearTimeout(timer);timer=setTimeout(()=>{if(idx<STEPS.length-1)go(idx+1);},4200);}
+$('#skip').onclick=()=>{clearTimeout(timer);clearInterval(typer);$('#shade').style.display='none';$('#ring').style.opacity=0;$('#ttext').style.opacity=0;};
+$('#replay').onclick=()=>{$('#shade').style.display='';$('#ttext').style.opacity=1;go(0);};
+go(0);
+</script></body></html>
