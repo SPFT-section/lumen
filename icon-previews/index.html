@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="th"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>App icon + logo — L 5 แบบ (preview)</title>
+<title>App icon + logo — L มีลูกเล่น (preview)</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=IBM+Plex+Sans+Thai:wght@300;400;500;600&display=swap">
 <style>
 *{box-sizing:border-box}body{margin:0;background:#070707;color:#f2f2ef;font-family:"IBM Plex Sans Thai",system-ui,sans-serif;padding:32px 20px}
@@ -12,61 +12,66 @@
 .sz128{width:128px;height:128px}.sz48{width:48px;height:48px}.sz32{width:32px;height:32px;border-radius:50%}
 .lockup{display:flex;align-items:center;justify-content:center;gap:10px;padding:12px;border:1px dashed rgba(255,255,255,.14);border-radius:12px;font-size:13px;letter-spacing:.3em}
 .note{color:#777;font-size:13px}.code{color:#aaa;font-size:12px}
+.tw{animation:tw 2.2s ease-in-out infinite}
+.tw2{animation:tw 2.2s ease-in-out .7s infinite}
+.tw3{animation:tw 2.2s ease-in-out 1.3s infinite}
+@keyframes tw{0%,100%{opacity:.15}50%{opacity:1}}
+.pulse{animation:pu 3s ease-in-out infinite;transform-box:fill-box;transform-origin:center}
+@keyframes pu{0%,100%{opacity:.5}50%{opacity:1}}
+.rise{animation:rise 4s linear infinite}
+@keyframes rise{0%{transform:translateY(20px);opacity:0}25%{opacity:.8}100%{transform:translateY(-140px);opacity:0}}
+.floaty{animation:flo 3.4s ease-in-out infinite}
+@keyframes flo{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
 </style></head><body><div class="wrap">
-<h1 style="margin:0">Icon + Logo — ตัว L เป็นหลัก (5 แบบ)</h1>
-<p class="note">ดูขนาดจริง 128/48/32 และคู่กับชื่อ LUMEN — ชอบอันไหนบอกเลขมา จะเอาไปใส่แอป + ทำไอคอน APK ให้ (ตอนนี้ยังไม่แตะของจริง)</p>
+<h1 style="margin:0">Icon + Logo — L มีลูกเล่น (ขยับได้)</h1>
+<p class="note">ไอคอนทั้ง 5 มีแอนิเมชันในหน้าเว็บพรีวิว (ประกาย/แสงวิ่ง/วงโคจร) — ตอนเป็นไอคอน APK จริงจะนิ่ง แต่ลูกเล่นรูปทรงยังอยู่ครบ ชอบอันไหนบอกเลขมา</p>
 <div class="grid">
 
 <div class="card">
 <div class="iconrow">
-<svg class="sz128" viewBox="0 0 512 512"><rect width="512" height="512" rx="112" fill="#0b0b0b"/><rect x="14" y="14" width="484" height="484" rx="100" fill="none" stroke="#262626" stroke-width="2"/><text x="256" y="372" text-anchor="middle" font-family="Cormorant Garamond,Georgia,serif" font-weight="600" font-size="330" fill="#f0f0ed">L</text></svg>
-<svg class="sz48" viewBox="0 0 512 512"><rect width="512" height="512" rx="112" fill="#0b0b0b"/><text x="256" y="372" text-anchor="middle" font-family="Cormorant Garamond,Georgia,serif" font-weight="600" font-size="330" fill="#f0f0ed">L</text></svg>
-<svg class="sz32" viewBox="0 0 512 512"><rect width="512" height="512" rx="112" fill="#0b0b0b"/><text x="256" y="372" text-anchor="middle" font-family="Cormorant Garamond,Georgia,serif" font-weight="600" font-size="330" fill="#f0f0ed">L</text></svg>
+<svg class="sz128" viewBox="0 0 512 512"><defs><clipPath id="c1"><text x="256" y="372" text-anchor="middle" font-family="Cormorant Garamond,Georgia,serif" font-weight="600" font-size="330">L</text></clipPath><linearGradient id="sh1" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset=".5" stop-color="#fff" stop-opacity=".85"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient></defs><rect width="512" height="512" rx="112" fill="#0b0b0b"/><rect x="14" y="14" width="484" height="484" rx="100" fill="none" stroke="#262626" stroke-width="2"/><text x="256" y="372" text-anchor="middle" font-family="Cormorant Garamond,Georgia,serif" font-weight="600" font-size="330" fill="#f0f0ed">L</text><rect x="-160" y="40" width="130" height="440" fill="url(#sh1)" clip-path="url(#c1)" opacity=".55"><animateTransform attributeName="transform" type="translate" from="0 0" to="700 0" dur="3.2s" repeatCount="indefinite"/></rect><g fill="#fff"><path class="tw" d="M400 120 l6 16 16 6 -16 6 -6 16 -6 -16 -16 -6 16 -6z"/><path class="tw2" d="M112 300 l5 12 12 5 -12 5 -5 12 -5 -12 -12 -5 12 -5z"/><path class="tw3" d="M392 340 l5 12 12 5 -12 5 -5 12 -5 -12 -12 -5 12 -5z"/></g></svg>
+<svg class="sz48" viewBox="0 0 512 512"><rect width="512" height="512" rx="112" fill="#0b0b0b"/><text x="256" y="372" text-anchor="middle" font-family="Cormorant Garamond,Georgia,serif" font-weight="600" font-size="330" fill="#f0f0ed">L</text><g fill="#fff"><circle class="tw" cx="400" cy="130" r="10"/><circle class="tw2" cx="112" cy="310" r="8"/></g></svg>
 </div>
-<div class="lockup"><svg width="26" height="26" viewBox="0 0 512 512"><rect width="512" height="512" rx="112" fill="#0b0b0b"/><text x="256" y="372" text-anchor="middle" font-family="Cormorant Garamond,Georgia,serif" font-weight="600" font-size="330" fill="#f0f0ed">L</text></svg><span>LUMEN</span></div>
-<h2>L1 — Onyx Serif</h2><p>L เชิงเซอริฟขาวบนดำสนิท มินิมอล เข้ากับธีมแอปที่สุด</p>
-</div>
-
-<div class="card">
-<div class="iconrow">
-<svg class="sz128" viewBox="0 0 512 512"><rect width="512" height="512" rx="112" fill="#101014"/><path d="M176 96 h64 v224 h120 v64 h-184 z" fill="#f0f0ed"/><circle cx="336" cy="128" r="26" fill="#8fd0a4"/><path d="M176 384 l-34 44 34 12z" fill="#8fd0a4"/></svg>
-<svg class="sz48" viewBox="0 0 512 512"><rect width="512" height="512" rx="112" fill="#101014"/><path d="M176 96 h64 v224 h120 v64 h-184 z" fill="#f0f0ed"/><circle cx="336" cy="128" r="26" fill="#8fd0a4"/></svg>
-<svg class="sz32" viewBox="0 0 512 512"><rect width="512" height="512" rx="112" fill="#101014"/><path d="M176 96 h64 v224 h120 v64 h-184 z" fill="#f0f0ed"/><circle cx="336" cy="128" r="26" fill="#8fd0a4"/></svg>
-</div>
-<div class="lockup"><svg width="26" height="26" viewBox="0 0 512 512"><rect width="512" height="512" rx="112" fill="#101014"/><path d="M176 96 h64 v224 h120 v64 h-184 z" fill="#f0f0ed"/></svg><span>LUMEN</span></div>
-<h2>L2 — Quill L</h2><p>L ทรงปากกาหัวแหลม + จุดหมึกเขียว สื่อ “นักเขียน” ชัดเจน</p>
+<div class="lockup"><span style="font-family:'Cormorant Garamond',serif;font-size:22px">L</span><span>LUMEN</span><span style="color:#8fd0a4">✦</span></div>
+<h2>L1 — Onyx Sparkle</h2><p>แสงวิ่งผ่านตัว L + ดาวกะพริบ 3 ดวง ดำล้วนแต่ไม่นิ่ง</p>
 </div>
 
 <div class="card">
 <div class="iconrow">
-<svg class="sz128" viewBox="0 0 512 512"><defs><linearGradient id="g3" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8ab4ff"/><stop offset=".5" stop-color="#c58aff"/><stop offset="1" stop-color="#ff8ad4"/></linearGradient><filter id="gl3" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="18"/></filter></defs><rect width="512" height="512" rx="112" fill="#08080d"/><ellipse cx="150" cy="120" rx="150" ry="110" fill="#3b2a7a" filter="url(#gl3)"/><ellipse cx="380" cy="400" rx="150" ry="110" fill="#123f5e" filter="url(#gl3)"/><path d="M186 106 h66 v214 h112 v62 h-178 z" fill="none" stroke="url(#g3)" stroke-width="34" stroke-linejoin="round"/></svg>
+<svg class="sz128" viewBox="0 0 512 512"><rect width="512" height="512" rx="112" fill="#101014"/><path d="M176 96 h64 v224 h120 v64 h-184 z" fill="#f0f0ed"/><path class="pulse" d="M176 384 l-34 44 34 12z" fill="#8fd0a4"/><circle class="pulse" cx="336" cy="128" r="26" fill="#8fd0a4"/><g fill="#8fd0a4"><circle class="tw" cx="392" cy="200" r="9"/><circle class="tw2" cx="120" cy="150" r="7"/><circle class="tw3" cx="360" cy="400" r="8"/><path class="tw2" d="M250 420 l6 16 16 6 -16 6 -6 16 -6 -16 -16 -6 16 -6z"/></g></svg>
+<svg class="sz48" viewBox="0 0 512 512"><rect width="512" height="512" rx="112" fill="#101014"/><path d="M176 96 h64 v224 h120 v64 h-184 z" fill="#f0f0ed"/><circle cx="336" cy="128" r="26" fill="#8fd0a4"/><circle class="tw" cx="392" cy="200" r="12" fill="#8fd0a4"/></svg>
+</div>
+<div class="lockup"><span style="font-family:Georgia,serif;font-size:22px">L</span><span>LUMEN</span><span style="color:#8fd0a4">●</span></div>
+<h2>L2 — Inky Quill</h2><p>หยดหมึกเขียวเรืองแสง + ละอองหมึกลอย เหมือนกำลังเขียนอยู่</p>
+</div>
+
+<div class="card">
+<div class="iconrow">
+<svg class="sz128" viewBox="0 0 512 512"><defs><linearGradient id="g3b" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8ab4ff"/><stop offset=".5" stop-color="#c58aff"/><stop offset="1" stop-color="#ff8ad4"/></linearGradient><filter id="gl3b" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="18"/></filter></defs><rect width="512" height="512" rx="112" fill="#08080d"/><ellipse class="pulse" cx="150" cy="120" rx="150" ry="110" fill="#3b2a7a" filter="url(#gl3b)"/><ellipse class="pulse" cx="380" cy="400" rx="150" ry="110" fill="#123f5e" filter="url(#gl3b)"/><path d="M186 106 h66 v214 h112 v62 h-178 z" fill="none" stroke="url(#g3b)" stroke-width="34" stroke-linejoin="round"/><circle r="14" fill="#fff"><animateMotion dur="4s" repeatCount="indefinite" path="M186 106 h66 v214 h112 v62 h-178 z"/></circle></svg>
 <svg class="sz48" viewBox="0 0 512 512"><rect width="512" height="512" rx="112" fill="#08080d"/><ellipse cx="150" cy="120" rx="150" ry="110" fill="#3b2a7a"/><ellipse cx="380" cy="400" rx="150" ry="110" fill="#123f5e"/><path d="M186 106 h66 v214 h112 v62 h-178 z" fill="none" stroke="#b48aff" stroke-width="40" stroke-linejoin="round"/></svg>
-<svg class="sz32" viewBox="0 0 512 512"><rect width="512" height="512" rx="112" fill="#08080d"/><path d="M186 106 h66 v214 h112 v62 h-178 z" fill="none" stroke="#b48aff" stroke-width="44" stroke-linejoin="round"/></svg>
 </div>
-<div class="lockup"><svg width="26" height="26" viewBox="0 0 512 512"><rect width="512" height="512" rx="112" fill="#08080d"/><path d="M186 106 h66 v214 h112 v62 h-178 z" fill="none" stroke="#b48aff" stroke-width="44" stroke-linejoin="round"/></svg><span>LUMEN</span></div>
-<h2>L3 — Aurora L</h2><p>L เส้นไล่สีม่วง–ชมพูบนแสงออโรร่า ทันสมัย เด่นบนจอ</p>
+<div class="lockup"><span style="font-size:22px;color:#b48aff">L</span><span>LUMEN</span></div>
+<h2>L3 — Orbit Aurora</h2><p>แสงวิ่งวนรอบตัว L + พื้นหลังหายใจ เด่นสุดบนจอ</p>
 </div>
 
 <div class="card">
 <div class="iconrow">
-<svg class="sz128" viewBox="0 0 512 512"><rect width="512" height="512" rx="112" fill="#0a0705"/><rect x="34" y="34" width="444" height="444" rx="88" fill="none" stroke="#d4af37" stroke-width="6"/><rect x="52" y="52" width="408" height="408" rx="76" fill="none" stroke="#d4af37" stroke-width="2" opacity=".5"/><text x="256" y="368" text-anchor="middle" font-family="Cormorant Garamond,Georgia,serif" font-weight="600" font-size="300" fill="#d4af37">L</text><text x="256" y="420" text-anchor="middle" font-size="30" letter-spacing="12" fill="#d4af37" opacity=".8">❦</text></svg>
+<svg class="sz128" viewBox="0 0 512 512"><defs><clipPath id="c4"><rect x="34" y="34" width="444" height="444" rx="88"/><text x="256" y="368" text-anchor="middle" font-family="Cormorant Garamond,Georgia,serif" font-weight="600" font-size="300">L</text></clipPath><linearGradient id="sh4" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset=".5" stop-color="#fff" stop-opacity=".5"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient></defs><rect width="512" height="512" rx="112" fill="#0a0705"/><rect x="34" y="34" width="444" height="444" rx="88" fill="none" stroke="#d4af37" stroke-width="6"/><rect x="52" y="52" width="408" height="408" rx="76" fill="none" stroke="#d4af37" stroke-width="2" opacity=".5"/><text x="256" y="368" text-anchor="middle" font-family="Cormorant Garamond,Georgia,serif" font-weight="600" font-size="300" fill="#d4af37">L</text><rect x="-200" y="-100" width="180" height="800" fill="url(#sh4)" clip-path="url(#c4)" transform="rotate(20 256 256)"><animateTransform attributeName="transform" type="translate" additive="sum" from="-100 0" to="700 0" dur="4s" repeatCount="indefinite"/></rect><text class="floaty" x="256" y="428" text-anchor="middle" font-size="30" fill="#d4af37" opacity=".85">❦</text></svg>
 <svg class="sz48" viewBox="0 0 512 512"><rect width="512" height="512" rx="112" fill="#0a0705"/><rect x="34" y="34" width="444" height="444" rx="88" fill="none" stroke="#d4af37" stroke-width="10"/><text x="256" y="372" text-anchor="middle" font-family="Cormorant Garamond,Georgia,serif" font-weight="600" font-size="310" fill="#d4af37">L</text></svg>
-<svg class="sz32" viewBox="0 0 512 512"><rect width="512" height="512" rx="112" fill="#0a0705"/><text x="256" y="376" text-anchor="middle" font-family="Cormorant Garamond,Georgia,serif" font-weight="600" font-size="320" fill="#d4af37">L</text></svg>
 </div>
-<div class="lockup"><svg width="26" height="26" viewBox="0 0 512 512"><rect width="512" height="512" rx="112" fill="#0a0705"/><text x="256" y="376" text-anchor="middle" font-family="Cormorant Garamond,Georgia,serif" font-weight="600" font-size="320" fill="#d4af37">L</text></svg><span>LUMEN</span></div>
-<h2>L4 — Heritage Gold</h2><p>L ทอง + กรอบทองคู่ เข้าชุดกับปก Heritage Gold หรูหรา</p>
+<div class="lockup"><span style="font-family:'Cormorant Garamond',serif;font-size:22px;color:#d4af37">L</span><span>LUMEN</span></div>
+<h2>L4 — Gilded Shine</h2><p>แสงทองกวาดผ่านกรอบ + ❦ ลอย หรูแต่มีชีวิต</p>
 </div>
 
 <div class="card">
 <div class="iconrow">
-<svg class="sz128" viewBox="0 0 512 512"><rect width="512" height="512" rx="112" fill="#0a0a10"/><circle cx="140" cy="130" r="90" fill="#2a4a6a"/><circle cx="390" cy="390" r="100" fill="#3a2a5e"/><rect x="96" y="96" width="320" height="320" rx="72" fill="#ffffff" opacity=".09"/><rect x="96" y="96" width="320" height="320" rx="72" fill="none" stroke="#ffffff" stroke-opacity=".25" stroke-width="3"/><path d="M206 156 h52 v172 h92 v50 h-144 z" fill="#fff"/></svg>
+<svg class="sz128" viewBox="0 0 512 512"><rect width="512" height="512" rx="112" fill="#0a0a10"/><circle cx="140" cy="130" r="90" fill="#2a4a6a"/><circle cx="390" cy="390" r="100" fill="#3a2a5e"/><g fill="#9adcff"><circle class="rise" cx="180" cy="420" r="10"/><circle class="rise" style="animation-delay:1.3s" cx="260" cy="430" r="7"/><circle class="rise" style="animation-delay:2.6s" cx="330" cy="425" r="9"/></g><rect x="96" y="96" width="320" height="320" rx="72" fill="#ffffff" opacity=".09"/><rect x="96" y="96" width="320" height="320" rx="72" fill="none" stroke="#ffffff" stroke-opacity=".25" stroke-width="3"/><path class="pulse" d="M206 156 h52 v172 h92 v50 h-144 z" fill="#fff"/></svg>
 <svg class="sz48" viewBox="0 0 512 512"><rect width="512" height="512" rx="112" fill="#0a0a10"/><circle cx="140" cy="130" r="90" fill="#2a4a6a"/><circle cx="390" cy="390" r="100" fill="#3a2a5e"/><rect x="96" y="96" width="320" height="320" rx="72" fill="#ffffff" opacity=".12"/><path d="M206 156 h52 v172 h92 v50 h-144 z" fill="#fff"/></svg>
-<svg class="sz32" viewBox="0 0 512 512"><rect width="512" height="512" rx="112" fill="#0a0a10"/><rect x="96" y="96" width="320" height="320" rx="72" fill="#ffffff" opacity=".14"/><path d="M206 156 h52 v172 h92 v50 h-144 z" fill="#fff"/></svg>
 </div>
-<div class="lockup"><svg width="26" height="26" viewBox="0 0 512 512"><rect width="512" height="512" rx="72" fill="#17171f"/><path d="M206 156 h52 v172 h92 v50 h-144 z" fill="#fff"/></svg><span>LUMEN</span></div>
-<h2>L5 — Smoked Glass</h2><p>L ขาวบนกระจกควัน เข้าชุดกับปกกระจก + ธีมแอป</p>
+<div class="lockup"><span style="font-size:20px">L</span><span>LUMEN</span></div>
+<h2>L5 — Bubble Glass</h2><p>ฟองอากาศลอยในกระจก + ตัว L เรืองแสง เข้ากับปกกระจก</p>
 </div>
 
 </div>
-<p class="note" style="margin-top:20px">run: <code class="code">python3 -m http.server 8000</code> → <code class="code">http://localhost:8000/icon-previews/</code></p>
+<p class="note" style="margin-top:20px">ดูที่ <code class="code">http://localhost:8000/icon-previews/</code> (รันเซิร์ฟเวอร์เดิมอยู่แล้ว)</p>
 </div></body></html>
