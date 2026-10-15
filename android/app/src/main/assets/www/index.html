@@ -290,15 +290,17 @@ button:disabled{opacity:.38;cursor:not-allowed}
 body.tlock{overflow:hidden}
 #tshade{position:fixed;inset:0;background:rgba(0,0,0,.74);z-index:200;opacity:0;pointer-events:none;transition:opacity .4s}
 #tshade.on{opacity:1;pointer-events:auto}
-#tring{position:fixed;border:2px solid #fff;border-radius:14px;box-shadow:0 0 0 6px rgba(255,255,255,.12),0 0 34px rgba(255,255,255,.3);z-index:201;pointer-events:none;transition:all .5s cubic-bezier(.2,.8,.2,1);animation:tringp 1.6s ease-in-out infinite}
+#tring{position:fixed;border:2px solid #fff;border-radius:14px;box-shadow:0 0 0 6px rgba(255,255,255,.12),0 0 34px rgba(255,255,255,.3);z-index:201;pointer-events:none;transition:left .65s cubic-bezier(.22,1,.36,1),top .65s cubic-bezier(.22,1,.36,1),width .65s cubic-bezier(.22,1,.36,1),height .65s cubic-bezier(.22,1,.36,1),opacity .35s;animation:tringp 1.6s ease-in-out infinite}
 @keyframes tringp{50%{box-shadow:0 0 0 10px rgba(255,255,255,.06),0 0 44px rgba(255,255,255,.4)}}
-#ttext{position:fixed;z-index:202;pointer-events:none;max-width:min(320px,calc(100vw - 40px));text-shadow:0 2px 16px #000}
+#ttext{position:fixed;z-index:202;pointer-events:none;max-width:min(320px,calc(100vw - 40px));text-shadow:0 2px 16px #000;transition:left .55s cubic-bezier(.22,1,.36,1),top .55s cubic-bezier(.22,1,.36,1),opacity .35s}
 #ttext .tkick{font-size:11px;letter-spacing:.3em;color:var(--ok);margin-bottom:8px}
 #ttext h3{font-family:var(--font-serif);font-weight:500;font-size:24px;line-height:1.55;margin:0}
 #ttext .tcaret{display:inline-block;width:2px;height:1em;background:#fff;vertical-align:-2px;animation:tblink 1s steps(1) infinite}
 @keyframes tblink{50%{opacity:0}}
 #ttext .tsub{color:#cfcfcf;font-size:13px;line-height:1.8;margin:8px 0 0}
-#tbar{position:fixed;top:0;left:0;height:3px;background:#fff;z-index:203;width:0;transition:width .4s}
+#tbar{position:fixed;top:0;left:0;height:3px;background:#fff;z-index:203;width:0;transition:width .6s ease}
+body.tlock .view.on{animation:tviewin .45s cubic-bezier(.22,1,.36,1)}
+@keyframes tviewin{from{opacity:0;transform:translateY(12px)}}
 #tskip{position:fixed;top:12px;right:14px;z-index:204;background:rgba(20,20,24,.85);border:1px solid var(--line-2);color:var(--ink);border-radius:99px;padding:8px 16px;font-size:13px;display:none}
 #tourBtn{font-size:18px;font-weight:600}
 
@@ -1317,14 +1319,14 @@ body.tlock{overflow:hidden}
     tourType = setInterval(() => {
       if (c < d.h.length) { h.textContent += d.h[c++]; }
       else { clearInterval(tourType); sb.textContent = d.s; }
-    }, 45);
+    }, 38);
     const show = () => {
       if (!d.sel) { ring.hidden = true; tourPlace(null); }
       else {
         const el = document.querySelector(d.sel);
         if (!el) { ring.hidden = true; tourPlace(null); }
         else {
-          try { el.scrollIntoView({block: 'center'}); } catch(e) {}
+          try { el.scrollIntoView({block: 'center', behavior: 'smooth'}); } catch(e) {}
           const r = el.getBoundingClientRect();
           ring.hidden = false;
           ring.style.left = (r.left - 10) + 'px'; ring.style.top = (r.top - 10) + 'px';
@@ -1333,7 +1335,7 @@ body.tlock{overflow:hidden}
         }
       }
     };
-    if (d.sel) setTimeout(show, 380); else show();
+    if (d.sel) setTimeout(show, 620); else show();
     clearTimeout(tourTimer);
     const last = tourIdx === TOUR.length - 1;
     tourTimer = setTimeout(() => { if (last) tourEnd(); else tourGo(tourIdx + 1); }, last ? 6000 : 4600);
