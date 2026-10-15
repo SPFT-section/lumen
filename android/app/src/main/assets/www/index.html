@@ -1306,6 +1306,7 @@ body.tlock .view.on{animation:tviewin .45s cubic-bezier(.22,1,.36,1)}
     tourIdx = i; const d = TOUR[tourIdx];
     document.body.classList.add('tlock');
     $('#tshade').classList.add('on'); $('#tskip').style.display = 'block';
+    $('#tring').hidden = true;
     closeSettings();
     if (d.v) go(d.v, {novel: tourNovel});
     if (d.modal === 'settings') openSettings();
@@ -1324,15 +1325,13 @@ body.tlock .view.on{animation:tviewin .45s cubic-bezier(.22,1,.36,1)}
       if (!d.sel) { ring.hidden = true; tourPlace(null); }
       else {
         const el = document.querySelector(d.sel);
-        if (!el) { ring.hidden = true; tourPlace(null); }
-        else {
-          try { el.scrollIntoView({block: 'center', behavior: 'smooth'}); } catch(e) {}
+        if (!el || !el.offsetParent) { tourGo((tourIdx + 1) % TOUR.length); return; }
+        try { el.scrollIntoView({block: 'center', behavior: 'smooth'}); } catch(e) {}
           const r = el.getBoundingClientRect();
           ring.hidden = false;
           ring.style.left = (r.left - 10) + 'px'; ring.style.top = (r.top - 10) + 'px';
           ring.style.width = (r.width + 20) + 'px'; ring.style.height = (r.height + 20) + 'px';
           tourPlace(r);
-        }
       }
     };
     if (d.sel) setTimeout(show, 620); else show();
