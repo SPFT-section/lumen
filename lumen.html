@@ -1326,7 +1326,7 @@ body.tlock{overflow:hidden}
     closeSettings();
     if (d.v) go(d.v, {novel: tourNovel});
     if (d.modal === 'settings') openSettings();
-    if (d.sel) { try { const _el = document.querySelector(d.sel); if (_el && _el.offsetParent) _el.scrollIntoView({block: 'nearest', behavior: 'smooth'}); } catch(e) {} }
+    if (d.sel) { try { const _el = document.querySelector(d.sel); if (_el && _el.offsetParent) _el.scrollIntoView({block: 'nearest', behavior: 'auto'}); } catch(e) {} }
     $('#tbar').style.width = d.bar + '%';
     const ring = $('#tring'), t = $('#ttext');
     t.hidden = false;
@@ -1362,7 +1362,7 @@ body.tlock{overflow:hidden}
         }
       }
     };
-    if (d.sel) tourShow = setTimeout(show, 650); else show();
+    if (d.sel) tourShow = setTimeout(show, 350); else show();
     clearTimeout(tourTimer);
     const last = tourIdx === TOUR.length - 1;
     tourTimer = setTimeout(() => { if (last) tourEnd(); else tourGo(tourIdx + 1); }, last ? 6000 : 4600);
