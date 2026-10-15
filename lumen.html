@@ -301,10 +301,10 @@ body.tlock{overflow:hidden}
 #ttext .tstep{display:inline-flex;align-items:center;gap:8px;padding:4px 11px;border-radius:99px;background:rgba(18,18,22,.72);border:1px solid var(--line-2);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);font-size:10px;letter-spacing:.24em;color:var(--ink)}
 #ttext .tstep b{color:var(--warn);font-weight:600}
 #ttext .tkick{margin:10px 0 6px;font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--warn)}
-#ttext h3{font-family:var(--font-serif);font-weight:400;font-size:22px;line-height:1.5;margin:0;min-height:2.5em}
+#ttext h3{font-family:var(--font-serif);font-weight:400;font-size:22px;line-height:1.5;margin:0;min-height:3em}
 #ttext .tcaret{display:inline-block;width:2px;height:1em;background:#fff;vertical-align:-2px;animation:tblink 1s steps(1) infinite}
 @keyframes tblink{50%{opacity:0}}
-#ttext .tsub{color:#cfcfcf;font-size:13px;line-height:1.8;margin:6px 0 0}
+#ttext .tsub{color:#cfcfcf;font-size:13px;line-height:1.8;margin:6px 0 0;min-height:3.6em}
 #tbar{position:fixed;top:0;left:0;height:3px;background:#fff;z-index:203;width:0;transition:width .6s ease}
 .view:not([hidden]){animation:tviewin .32s cubic-bezier(.22,1,.36,1)}
 @keyframes tviewin{from{opacity:0;transform:translateY(12px)}}
@@ -1293,7 +1293,7 @@ body.tlock{overflow:hidden}
     {v:'data', modal:'settings', sel:'#backupMake', kick:'ตั้งค่า', h:'สำรองข้อมูลเสมอ', s:'สร้างข้อมูลสำรองเก็บไว้อีกที่ได้', bar:99},
     {v:null, kick:'จบแล้ว', h:'พร้อมเขียนเรื่องแรก', s:'กด ? มุมขวาบนดูทัวร์ซ้ำได้ตลอด', bar:100}
   ];
-  let tourIdx = -1, tourTimer = null, tourType = null, tourShow = null, tourNovel = null, tourPrevV = null;
+  let tourIdx = -1, tourTimer = null, tourType = null, tourShow = null, tourNovel = null, tourPrevV = null, tourRect = null;
   function tourPlace(r) {
     const t = $('#ttext'), W = Math.min(300, innerWidth - 32);
     if (!r) {
@@ -1345,15 +1345,16 @@ body.tlock{overflow:hidden}
     const h = $('#ttext .th'); h.textContent = ''; let c = 0;
     tourType = setInterval(() => {
       if (c < d.h.length) { h.textContent += d.h[c++]; }
-      else { clearInterval(tourType); sb.textContent = d.s; }
+      else { clearInterval(tourType); sb.textContent = d.s; tourPlace(tourRect); }
     }, 38);
     const show = () => {
-      if (!d.sel) { ring.style.opacity = 0; tourPlace(null); }
+      if (!d.sel) { tourRect = null; ring.style.opacity = 0; tourPlace(null); }
       else {
         const el = document.querySelector(d.sel);
-        if (!el || !el.offsetParent) { ring.style.opacity = 0; tourPlace(null); }
+        if (!el || !el.offsetParent) { tourRect = null; ring.style.opacity = 0; tourPlace(null); }
         else {
           const r = el.getBoundingClientRect();
+          tourRect = r;
           ring.style.left = (r.left - 10) + 'px'; ring.style.top = (r.top - 10) + 'px';
           ring.style.width = (r.width + 20) + 'px'; ring.style.height = (r.height + 20) + 'px';
           void ring.offsetWidth;
