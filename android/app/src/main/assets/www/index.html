@@ -99,6 +99,11 @@ button:disabled{opacity:.38;cursor:not-allowed}
 .cv-frame .c-bg::before{inset:5cqw}.cv-frame .c-bg::after{inset:6.6cqw;opacity:.5}
 .cv-frame .c-in{text-align:center;align-items:center;padding:16cqw 14cqw 13cqw}
 .cv-image .c-bg::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.55),rgba(0,0,0,.05) 40%,rgba(0,0,0,.7))}
+.cv-glass .c-bg{background:radial-gradient(110% 60% at 50% 0%,hsl(var(--h) 50% 26%/.8),transparent 65%),#0a0a0d}
+.cv-glass .c-in{top:auto;bottom:0;height:23%;display:block;overflow:hidden;padding:3.2cqw 6cqw 11cqw;background:rgba(6,6,10,.75);backdrop-filter:blur(22px) saturate(150%);-webkit-backdrop-filter:blur(22px) saturate(150%)}
+.cv-glass .c-title{font-size:7.6cqw;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.cv-glass .c-tag{margin:1.2cqw 0 0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cv-glass .c-author{position:absolute;left:6cqw;right:6cqw;bottom:2.6cqw;border-top:1px solid rgba(255,255,255,.2);padding-top:2cqw;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 
 /* home */
 .home-actions{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
@@ -698,7 +703,7 @@ button:disabled{opacity:.38;cursor:not-allowed}
     const cv = Object.assign({}, n.cover, over || {});
     const img = typeof cv.image === 'string' && cv.image.startsWith('data:image/') ? cv.image : '';
     let st = cv.style; if (st === 'image' && !img) st = 'aurora';
-    const bg = st === 'image' ? ` style="background-image:url('${img}')"` : '';
+    const bg = (st === 'image' || st === 'glass') && img ? ` style="background-image:url('${img}')"` : '';
     return `<div class="cover cv-${st} cv-${cv.mode === 'cinematic' ? 'cinematic' : 'editorial'}" style="--h:${+cv.hue || 0}"><div class="c-bg"${bg}></div><div class="c-in"><div><div class="c-title">${esc(n.title)}</div>${n.tagline ? `<p class="c-tag">${esc(n.tagline)}</p>` : ''}</div><div class="c-author">${esc(n.author)}</div></div></div>`;
   }
 
@@ -778,8 +783,8 @@ button:disabled{opacity:.38;cursor:not-allowed}
     $('#coverPreview').innerHTML = coverHTML(n); $('#coverPreview').className = 'cover-mode-' + (n.cover.mode || 'editorial');
     $('#coverEditorial').classList.toggle('cover-mode-active', (n.cover.mode || 'editorial') === 'editorial'); $('#coverCinematic').classList.toggle('cover-mode-active', n.cover.mode === 'cinematic');
     const hasImg = !!(n.cover.image && n.cover.image.startsWith('data:image/'));
-    const styles = ['aurora','moon','lines','frame'].concat(hasImg ? ['image'] : []);
-    $('#styleList').innerHTML = styles.map(s => `<button class="style-opt${n.cover.style === s ? ' on' : ''}" data-s="${s}" title="${({aurora:'แสงเหนือ',moon:'จันทร์',lines:'เส้นสาย',frame:'กรอบ',image:'ภาพของคุณ'})[s]}">${coverHTML(n, {style:s})}</button>`).join('');
+    const styles = ['aurora','moon','lines','frame','glass'].concat(hasImg ? ['image'] : []);
+    $('#styleList').innerHTML = styles.map(s => `<button class="style-opt${n.cover.style === s ? ' on' : ''}" data-s="${s}" title="${({aurora:'แสงเหนือ',moon:'จันทร์',lines:'เส้นสาย',frame:'กรอบ',glass:'กระจกล่าง',image:'ภาพของคุณ'})[s]}">${coverHTML(n, {style:s})}</button>`).join('');
     $('#cRemoveImg').hidden = !hasImg;
     $('#crumb').textContent = n.title;
   }
