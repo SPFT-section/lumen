@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="th"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Tutorial motion — 3 แบบ (preview)</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@300;400;500;600&family=Noto+Serif+Thai:wght@400;500;600&display=swap">
+<style>
+*{box-sizing:border-box}body{margin:0;background:#070707;color:#f2f2ef;font-family:"IBM Plex Sans Thai",system-ui,sans-serif;padding:32px 20px}
+.wrap{max-width:1100px;margin:0 auto}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px;margin-top:20px}
+.card{border:1px solid rgba(255,255,255,.1);border-radius:18px;padding:20px;background:#0e0e0e}
+.card h2{margin:0 0 4px;font-size:16px}.card p.d{color:#888;font-size:12px;line-height:1.7;margin:0 0 14px}
+.phone{width:100%;max-width:300px;margin:0 auto;border:1px solid rgba(255,255,255,.14);border-radius:28px;overflow:hidden;background:#000;position:relative;height:480px}
+.row{display:flex;gap:8px;justify-content:center;margin-top:14px}
+.btn{background:#1c1c1e;color:#eee;border:1px solid rgba(255,255,255,.14);border-radius:10px;padding:8px 14px;cursor:pointer;font-size:13px}
+.btn:hover{background:#2a2a2e}.btn.primary{background:#f0f0ed;color:#0b0b0b;border-color:#fff}
+.dots{display:flex;gap:6px;justify-content:center;margin-top:12px}
+.dots i{width:7px;height:7px;border-radius:50%;background:#333;transition:.3s}
+.dots i.on{background:#fff;width:22px;border-radius:99px}
+/* T1 */
+.t1{position:absolute;inset:0;padding:36px 24px;display:flex;flex-direction:column;justify-content:center;background:radial-gradient(100% 60% at 50% 0%,#1a1a22,transparent),#060607}
+.t1 .kick{font-size:11px;letter-spacing:.3em;color:#8fd0a4;margin-bottom:14px;min-height:16px}
+.t1 h3{font-family:"Noto Serif Thai",serif;font-size:26px;line-height:1.5;margin:0;min-height:120px}
+.t1 .caret{display:inline-block;width:2px;height:1em;background:#fff;vertical-align:-2px;animation:blink 1s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+.t1 .sub{color:#999;font-size:13px;line-height:1.8;margin-top:12px;opacity:0;transform:translateY(8px);transition:.5s}
+.t1 .sub.show{opacity:1;transform:none}
+.t1 .bar{height:3px;background:#222;border-radius:99px;margin-top:26px;overflow:hidden}
+.t1 .bar i{display:block;height:100%;width:0;background:#fff;transition:width .3s}
+/* T2 */
+.t2{position:absolute;inset:0;background:#08080b;overflow:hidden}
+.t2 .track{display:flex;height:100%;transition:transform .55s cubic-bezier(.2,.8,.2,1)}
+.t2 .slide{flex:0 0 100%;padding:44px 26px;display:flex;flex-direction:column;align-items:center;text-align:center}
+.t2 .art{width:120px;height:120px;border-radius:34px;display:grid;place-items:center;font-size:52px;margin:30px 0 26px;background:linear-gradient(150deg,#1c1c22,#0c0c10);border:1px solid rgba(255,255,255,.14);box-shadow:0 20px 50px rgba(0,0,0,.5);animation:floaty 3s ease-in-out infinite}
+@keyframes floaty{50%{transform:translateY(-10px)}}
+.t2 h3{font-family:"Noto Serif Thai",serif;font-size:22px;margin:0}
+.t2 p{color:#999;font-size:13px;line-height:1.8}
+/* T3 */
+.t3{position:absolute;inset:0;background:#0b0b0e}
+.t3 .mock{padding:14px}
+.t3 .tb{height:44px;border-radius:12px;background:#16161b;margin-bottom:12px;display:flex;align-items:center;padding:0 12px;font-size:12px;letter-spacing:.25em}
+.t3 .hero{height:120px;border-radius:14px;background:linear-gradient(140deg,#23232c,#121218);margin-bottom:12px;display:flex;align-items:center;justify-content:center;font-size:13px;color:#888}
+.t3 .rowb{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.t3 .bk{height:110px;border-radius:12px;background:#15151b;border:1px solid rgba(255,255,255,.08)}
+.t3 .fab{position:absolute;right:16px;bottom:86px;width:52px;height:52px;border-radius:50%;background:#f0f0ed;color:#000;display:grid;place-items:center;font-size:24px}
+.t3 .shade{position:absolute;inset:0;background:rgba(0,0,0,.72);transition:.45s;pointer-events:none}
+.t3 .ring{position:absolute;border:2px solid #fff;border-radius:14px;box-shadow:0 0 0 6px rgba(255,255,255,.15),0 0 30px rgba(255,255,255,.35);transition:all .45s cubic-bezier(.2,.8,.2,1);animation:ringp 1.6s ease-in-out infinite}
+@keyframes ringp{50%{box-shadow:0 0 0 10px rgba(255,255,255,.08),0 0 40px rgba(255,255,255,.4)}}
+.t3 .tip{position:absolute;left:16px;right:16px;bottom:16px;background:#17171c;border:1px solid rgba(255,255,255,.16);border-radius:14px;padding:14px;transform:translateY(12px);opacity:0;transition:.4s}
+.t3 .tip.show{transform:none;opacity:1}
+.t3 .tip b{display:block;font-size:14px;margin-bottom:4px}
+.t3 .tip span{font-size:12px;color:#999;line-height:1.7}
+.note{color:#777;font-size:13px}
+</style></head><body><div class="wrap">
+<h1 style="margin:0">Tutorial motion — 3 แบบ</h1>
+<p class="note">แอนิเมชันบทช่วยสอนสำหรับเปิดแอปครั้งแรก กด Next/Replay ลองได้ทุกอัน ชอบอันไหนบอกเลขมา</p>
+<div class="grid">
+
+<div class="card"><h2>T1 — Typewriter Journey</h2><p class="d">พิมพ์ทีละตัวอักษร + แถบความคืบหน้า สุขุมแบบสำนักพิมพ์</p>
+<div class="phone"><div class="t1"><div class="kick" id="t1k"></div><h3><span id="t1h"></span><span class="caret"></span></h3><p class="sub" id="t1s"></p><div class="bar"><i id="t1b"></i></div></div></div>
+<div class="dots" id="t1d"><i></i><i></i><i></i></div>
+<div class="row"><button class="btn" id="t1p">←</button><button class="btn primary" id="t1n">→</button><button class="btn" id="t1r">Replay</button></div></div>
+
+<div class="card"><h2>T2 — Swipe Cards</h2><p class="d">การ์ดสไลด์ 3 ใบ (ปก/เขียน/อ่าน) ไอคอนลอยได้ ปัดหรือกดก็ได้</p>
+<div class="phone"><div class="t2"><div class="track" id="t2t">
+<div class="slide"><div class="art">📕</div><h3>1 · ออกแบบปก</h3><p>เลือกรูป ปรับกระจก ตั้งชื่อเรื่องในหน้าเดียว</p></div>
+<div class="slide"><div class="art">✒️</div><h3>2 · เขียนลื่นๆ</h3><p>ตัวหนา เอียง อ้างอิง นับคำอัตโนมัติ</p></div>
+<div class="slide"><div class="art">📖</div><h3>3 · อ่านสบาย</h3><p>ธีมมืด/ซีเปีย ปรับตัวอักษรได้ทุกขนาด</p></div>
+</div></div></div>
+<div class="dots" id="t2d"><i></i><i></i><i></i></div>
+<div class="row"><button class="btn" id="t2p">←</button><button class="btn primary" id="t2n">→</button></div></div>
+
+<div class="card"><h2>T3 — Spotlight Tour</h2><p class="d">ไฟส่องทีละจุดบนหน้าจอจริง + การ์ดอธิบาย เหมือนมีคนพาเดิน</p>
+<div class="phone"><div class="t3"><div class="mock">
+<div class="tb" id="m1">LUMEN</div><div class="hero" id="m2">＋ เริ่มเรื่องใหม่</div>
+<div class="rowb"><div class="bk" id="m3"></div><div class="bk"></div></div></div>
+<div class="fab" id="m4">＋</div>
+<div class="shade" id="t3s"></div><div class="ring" id="t3r"></div>
+<div class="tip" id="t3t"><b></b><span></span></div>
+</div></div>
+<div class="dots" id="t3d"><i></i><i></i><i></i></div>
+<div class="row"><button class="btn" id="t3p">←</button><button class="btn primary" id="t3n">→</button><button class="btn" id="t3r2">Replay</button></div></div>
+
+</div>
+<p class="note" style="margin-top:20px">ดูที่ <code>http://localhost:8000/tutorial-previews/</code></p>
+</div>
+<script>
+const $=s=>document.querySelector(s);
+/* T1 */
+const T1=[{k:'ยินดีต้อนรับ',h:'เขียนนิยายเล่มแรกของคุณ',s:'LUMEN เก็บทุกอย่างในเครื่อง ไม่ต้องสมัครสมาชิก',b:'33%'},{k:'เริ่มใน 10 วินาที',h:'ตั้งชื่อ แล้วเริ่มบทแรก',s:'ปก เรื่องย่อ ตัวละคร เติมทีหลังได้หมด',b:'66%'},{k:'พกไปทุกที่',h:'ส่งออก ติดตั้งเป็นแอป',s:'งานของคุณเป็นของคุณ ส่งออก JSON ได้ตลอด',b:'100%'}];
+let t1i=0,t1t=null;
+function t1go(i){t1i=(i+3)%3;const d=T1[t1i];clearInterval(t1t);
+ $('#t1k').textContent=d.k;$('#t1h').textContent='';const sb=$('#t1s');sb.textContent=d.s;sb.classList.remove('show');
+ $('#t1b').style.width='0';document.querySelectorAll('#t1d i').forEach((e,j)=>e.classList.toggle('on',j===t1i));
+ let c=0;t1t=setInterval(()=>{if(c<d.h.length){$('#t1h').textContent+=d.h[c++];}else{clearInterval(t1t);sb.classList.add('show');$('#t1b').style.width=d.b;}},55);}
+$('#t1n').onclick=()=>t1go(t1i+1);$('#t1p').onclick=()=>t1go(t1i-1);$('#t1r').onclick=()=>t1go(0);t1go(0);
+/* T2 */
+let t2i=0;
+function t2go(i){t2i=(i+3)%3;$('#t2t').style.transform=`translateX(-${t2i*100}%)`;document.querySelectorAll('#t2d i').forEach((e,j)=>e.classList.toggle('on',j===t2i));}
+$('#t2n').onclick=()=>t2go(t2i+1);$('#t2p').onclick=()=>t2go(t2i-1);t2go(0);
+/* T3 */
+const T3=[
+ {el:'#m2',t:'เริ่มเรื่องใหม่',s:'แตะปุ่มนี้ ตั้งชื่อ แล้วเริ่มบทแรกได้เลย'},
+ {el:'#m3',t:'ชั้นหนังสือ',s:'ทุกเรื่องอยู่ตรงนี้ แตะปกเพื่อเปิดอ่านหรือเขียนต่อ'},
+ {el:'#m4',t:'ปุ่มลัด',s:'ปุ่ม ＋ มุมขวา สร้างบท/บันทึกด่วนได้ทุกหน้า'}];
+let t3i=0;
+function t3go(i){t3i=(i+3)%3;const d=T3[t3i];const r=$(d.el).getBoundingClientRect();const pr=$('#t3r').parentElement.getBoundingClientRect();
+ const g=$('#t3r');g.style.left=(r.left-pr.left-8)+'px';g.style.top=(r.top-pr.top-8)+'px';g.style.width=(r.width+16)+'px';g.style.height=(r.height+16)+'px';
+ const tip=$('#t3t');tip.querySelector('b').textContent=(t3i+1)+' · '+d.t;tip.querySelector('span').textContent=d.s;tip.classList.remove('show');setTimeout(()=>tip.classList.add('show'),120);
+ document.querySelectorAll('#t3d i').forEach((e,j)=>e.classList.toggle('on',j===t3i));}
+$('#t3n').onclick=()=>t3go(t3i+1);$('#t3p').onclick=()=>t3go(t3i-1);$('#t3r2').onclick=()=>t3go(0);
+setTimeout(()=>t3go(0),400);
+</script></body></html>
