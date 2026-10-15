@@ -79,7 +79,7 @@ button:disabled{opacity:.38;cursor:not-allowed}
 
 /* views */
 .main{position:relative;flex:1;min-height:0}
-.view{position:absolute;inset:0;overflow-y:auto;overflow-x:hidden}
+.view{position:absolute;inset:0;overflow-y:auto;overflow-x:hidden;scroll-behavior:smooth;-webkit-overflow-scrolling:touch;overscroll-behavior-y:contain}
 .wrap{width:min(100%,1040px);margin:0 auto;padding:34px var(--gx-r) 70px var(--gx)}
 .page-head{display:flex;align-items:flex-end;justify-content:space-between;gap:18px;flex-wrap:wrap;margin-bottom:28px}
 .page-title{margin:0;font-family:var(--font-serif);font-weight:400;font-size:clamp(26px,5vw,38px);line-height:1.3;text-wrap:balance}
@@ -184,7 +184,7 @@ button:disabled{opacity:.38;cursor:not-allowed}
 .tool:hover{background:var(--fill-2);color:#fff}
 .tool strong{font-size:15px}.tool em{font-family:Georgia,serif;font-size:16px}
 .tool-sep{width:1px;height:20px;background:var(--line);margin:0 5px;flex:0 0 auto}
-.editor-scroll{position:absolute;inset:0;overflow:auto;padding:104px var(--gx-r) 150px var(--gx)}
+.editor-scroll{position:absolute;inset:0;overflow:auto;padding:104px var(--gx-r) 150px var(--gx);scroll-behavior:smooth;-webkit-overflow-scrolling:touch;overscroll-behavior-y:contain}
 .document{width:min(100%,760px);margin:0 auto;caret-color:#fff}
 .chapter-no{text-align:center;color:var(--ink-3);font-size:13px;letter-spacing:.2em;margin:18px 0}
 .chapter-title{text-align:center;font-family:var(--font-serif);font-size:clamp(26px,5vw,36px);line-height:1.4;font-weight:400;margin:0 0 50px;outline:none;min-height:1.4em;overflow-wrap:anywhere}
@@ -224,7 +224,7 @@ button:disabled{opacity:.38;cursor:not-allowed}
 .rbar .rtitle{min-width:0;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--r-mut);font-size:13px;font-family:var(--font-serif)}
 .rprog{position:absolute;left:0;right:0;bottom:-1px;height:2px;background:transparent}
 .rprog i{display:block;height:100%;background:var(--r-ink);transform-origin:left;transform:scaleX(0)}
-.rscroll{position:absolute;inset:0;overflow:auto;padding:84px var(--gx-r) 90px var(--gx)}
+.rscroll{position:absolute;inset:0;overflow:auto;padding:84px var(--gx-r) 90px var(--gx);scroll-behavior:smooth;-webkit-overflow-scrolling:touch;overscroll-behavior-y:contain}
 .rpage{width:min(100%,38em);margin:0 auto;font-family:var(--font-serif);font-size:var(--r-size)}
 .r-no{text-align:center;color:var(--r-mut);font-size:.7em;letter-spacing:.3em;margin:30px 0 14px}
 .r-title{text-align:center;font-weight:400;font-size:1.9em;line-height:1.4;margin:0 0 2.2em;overflow-wrap:anywhere}
@@ -1295,24 +1295,16 @@ body.tlock{overflow:hidden}
   ];
   let tourIdx = -1, tourTimer = null, tourType = null, tourShow = null, tourNovel = null, tourPrevV = null;
   function tourPlace(r) {
-    const t = $('#ttext'), W = 300;
+    const t = $('#ttext'), W = Math.min(300, innerWidth - 32);
     if (!r) {
       t.style.left = Math.max(20, (innerWidth - 360) / 2) + 'px';
       t.style.top = Math.max(64, innerHeight / 2 - 160) + 'px';
       return;
     }
-    let x, y;
-    if (innerWidth < 700) {
-      x = Math.min(Math.max(16, r.left), innerWidth - W - 16);
-      y = r.bottom + 14;
-      if (y + 270 > innerHeight - 40) y = Math.max(64, r.top - 280);
-    } else {
-      x = r.left + r.width + 26; y = r.top - 10;
-      if (x + W > innerWidth - 16) x = r.left - W - 26;
-      if (x < 16) { x = Math.max(16, r.left); y = r.bottom + 20; }
-      if (y + 270 > innerHeight - 60) y = Math.max(64, r.top - 280);
-    }
-    t.style.left = Math.max(16, x) + 'px'; t.style.top = Math.max(60, y) + 'px';
+    const x = Math.min(Math.max(16, r.left), innerWidth - W - 16);
+    let y = r.bottom + 14;
+    if (y + 270 > innerHeight - 40) y = Math.max(64, r.top - 280);
+    t.style.left = x + 'px'; t.style.top = Math.max(60, y) + 'px';
   }
   function ensureTourNovel() {
     const sorted = lib.novels.slice().sort((a, b) => b.updatedAt - a.updatedAt);
@@ -1334,6 +1326,7 @@ body.tlock{overflow:hidden}
     closeSettings();
     if (d.v) go(d.v, {novel: tourNovel});
     if (d.modal === 'settings') openSettings();
+    if (d.sel) { try { const _el = document.querySelector(d.sel); if (_el && _el.offsetParent) _el.scrollIntoView({block: 'nearest', behavior: 'smooth'}); } catch(e) {} }
     $('#tbar').style.width = d.bar + '%';
     const ring = $('#tring'), t = $('#ttext');
     t.hidden = false;
@@ -1359,7 +1352,6 @@ body.tlock{overflow:hidden}
         const el = document.querySelector(d.sel);
         if (!el || !el.offsetParent) { ring.style.opacity = 0; tourPlace(null); }
         else {
-          try { el.scrollIntoView({block: 'nearest', behavior: 'smooth'}); } catch(e) {}
           const r = el.getBoundingClientRect();
           ring.style.left = (r.left - 10) + 'px'; ring.style.top = (r.top - 10) + 'px';
           ring.style.width = (r.width + 20) + 'px'; ring.style.height = (r.height + 20) + 'px';

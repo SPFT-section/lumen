@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="th"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>บัคขั้น 5→6 — 3 แบบ (ก่อนปรับ)</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@300;400;500;600&family=Noto+Serif+Thai:wght@400;500;600&display=swap">
+<style>
+*{box-sizing:border-box}body{margin:0;background:#070707;color:#f2f2ef;font-family:"IBM Plex Sans Thai",system-ui,sans-serif;padding:28px 18px}
+.wrap{max-width:1000px;margin:0 auto}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:16px;margin-top:18px}
+.card{border:1px solid rgba(255,255,255,.1);border-radius:18px;padding:18px;background:#0e0e0e}
+.card h2{margin:0 0 4px;font-size:15px}.card p{color:#888;font-size:12px;line-height:1.7;margin:0 0 12px;min-height:60px}
+.stage{position:relative;height:340px;border:1px solid rgba(255,255,255,.14);border-radius:16px;overflow:hidden;background:#000}
+.sc{position:absolute;inset:0;overflow-y:auto;padding:16px}
+.sc.smooth{scroll-behavior:smooth}
+.mockcv{height:180px;border-radius:10px;background:linear-gradient(180deg,#2b1a4d,#b3402e 60%,#f0a35e);margin-bottom:14px}
+.fld{margin:12px 0}.fld label{display:block;font-size:11px;color:#888;margin-bottom:5px}
+.inp{background:#111;border:1px solid rgba(255,255,255,.12);border-radius:8px;padding:9px 10px;color:#fff;font-size:13px}
+.btn{display:inline-block;background:#1c1c1e;border:1px solid rgba(255,255,255,.16);color:#eee;border-radius:9px;padding:9px 14px;font-size:13px;margin:4px 6px 4px 0}
+.trow{display:flex;gap:6px;flex-wrap:wrap;margin:4px 0}
+.ring{position:absolute;border:2px solid #fff;border-radius:12px;box-shadow:0 0 0 5px rgba(255,255,255,.12),0 0 26px rgba(255,255,255,.3);pointer-events:none;transition:left .5s,top .5s,width .5s,height .5s,opacity .3s;z-index:5}
+.tag{position:absolute;z-index:5;pointer-events:none;background:rgba(10,10,14,.85);border:1px solid rgba(255,255,255,.2);border-radius:9px;padding:6px 10px;font-size:12px;white-space:nowrap;transition:left .5s,top .5s,opacity .3s}
+.stepbar{text-align:center;font-size:12px;color:#8fd0a4;margin-top:10px;min-height:18px}
+.note{color:#777;font-size:13px}.bad{color:#ff9b9b}.good{color:#8fd0a4}
+</style></head><body><div class="wrap">
+<h1 style="margin:0">บัคขั้น 5 → 6: เลื่อนจอแล้ววงค้างผิดที่</h1>
+<p class="note">จำลองหน้าปกยาวๆ (ต้องเลื่อน) สลับเป้าระหว่าง <b>ภาพตัวอย่าง</b> กับ <b>อัปโหลด</b> วนอัตโนมัติ — ดูว่าวง+ป้ายไปตกตรงไหน</p>
+<div class="grid">
+<div class="card"><h2>A — แบบเดิม <span class="bad">(บัค)</span></h2><p>เลื่อน smooth + วัดตำแหน่งทันทีในจังหวะเดียวกัน → วงไปตกตำแหน่ง <b>ก่อนเลื่อน</b> จอเลื่อนเสร็จวงค้างผิดที่</p><div class="stage" id="sA"></div><div class="stepbar" id="bA"></div></div>
+<div class="card"><h2>B — เลื่อนก่อน วัดทีหลัง</h2><p>สั่งเลื่อนตั้งแต่ต้นขั้น รอจอหยุดแล้วค่อยวัด+วางวง → วงตกตรงเป้าพอดี <span class="good">จอแพน + วงจางเข้า</span></p><div class="stage" id="sB"></div><div class="stepbar" id="bB"></div></div>
+<div class="card"><h2>C — ไม่เลื่อนเลย</h2><p>ไม่เลื่อนจอ ถ้าเป้าอยู่นอกจอให้ snap ทันทีแล้ววางวง → ตรงแต่จอกระตุก <span class="good">เหมาะจอใหญ่ที่เห็นครบอยู่แล้ว</span></p><div class="stage" id="sC"></div><div class="stepbar" id="bC"></div></div>
+</div>
+<p class="note" style="margin-top:18px">ดูที่ <code>http://localhost:8000/tutorial-previews/step56.html</code> — ชอบแบบไหนบอกมา (ตอนนี้ในแอปใส่ B ไว้ก่อน)</p>
+</div>
+<script>
+function build(stageId,barId,mode){
+ const st=document.getElementById(stageId);
+ st.innerHTML=`<div class="sc${mode==='C'?'':' smooth'}">
+ <div class="mockcv"></div>
+ <div class="fld"><label>ภาพพื้นหลัง (ขั้น 5)</label><div class="trow" id="${stageId}-smp"><span class="btn">อาทิตย์ตก</span><span class="btn">ทะเล</span></div></div>
+ <div class="fld"><label>ความขุ่นกระจก</label><input type="range" style="width:100%"></div>
+ <div class="fld"><label>อัปโหลด (ขั้น 6)</label><span class="btn" id="${stageId}-up">อัปโหลดภาพปก</span></div>
+ <div style="height:120px"></div></div>
+ <div class="ring" style="opacity:0"></div><div class="tag" style="opacity:0"></div>`;
+ const sc=st.querySelector('.sc'),ring=st.querySelector('.ring'),tag=st.querySelector('.tag'),bar=document.getElementById(barId);
+ const targets=[{sel:`#${stageId}-smp`,t:'05 · ภาพตัวอย่าง'},{sel:`#${stageId}-up`,t:'06 · อัปโหลด'}];
+ let i=0;
+ function place(el,label){
+  const sr=st.getBoundingClientRect(),r=el.getBoundingClientRect();
+  const x=r.left-sr.left-8,yy=r.top-sr.top-8;
+  ring.style.opacity=1;ring.style.left=x+'px';ring.style.top=yy+'px';ring.style.width=(r.width+16)+'px';ring.style.height=(r.height+16)+'px';
+  tag.style.opacity=1;tag.style.left=x+'px';tag.style.top=(yy+r.height+24)+'px';tag.textContent=label;
+  bar.textContent=label;}
+ function step(){
+  const d=targets[i%2];i++;
+  const el=st.querySelector(d.sel);
+  const y=el.offsetTop-sc.clientHeight/2+40;
+  if(mode==='A'){sc.scrollTo({top:y,behavior:'smooth'});place(el,d.t+' — วัดทันที');}
+  else if(mode==='B'){sc.scrollTo({top:y,behavior:'smooth'});ring.style.opacity=0;tag.style.opacity=0;
+   setTimeout(()=>{const el2=st.querySelector(d.sel);const sr2=st.getBoundingClientRect(),r2=el2.getBoundingClientRect();
+    const x2=r2.left-sr2.left-8,yy2=r2.top-sr2.top-8;
+    ring.style.opacity=1;ring.style.left=x2+'px';ring.style.top=yy2+'px';ring.style.width=(r2.width+16)+'px';ring.style.height=(r2.height+16)+'px';
+    tag.style.opacity=1;tag.style.left=x2+'px';tag.style.top=(yy2+r2.height+24)+'px';tag.textContent=d.t+' — วัดหลังหยุด';bar.textContent=d.t;},650);}
+  else{sc.scrollTo({top:y});place(el,d.t+' — snap');}
+  setTimeout(step,3000);}
+ setTimeout(step,800);}
+build('sA','bA','A');build('sB','bB','B');build('sC','bC','C');
+</script></body></html>
