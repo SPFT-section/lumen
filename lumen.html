@@ -100,6 +100,18 @@ button:disabled{opacity:.38;cursor:not-allowed}
 .cv-frame .c-bg::before{inset:5cqw}.cv-frame .c-bg::after{inset:6.6cqw;opacity:.5}
 .cv-frame .c-in{text-align:center;align-items:center;padding:16cqw 14cqw 13cqw}
 .cv-image .c-bg::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.55),rgba(0,0,0,.05) 40%,rgba(0,0,0,.7))}
+/* D cover page (verbatim from cover-d-image-glass.html preview) */
+.d-cv{aspect-ratio:2/3;border-radius:6px 16px 16px 6px;overflow:hidden;position:relative;background:#111;color:#fff;box-shadow:0 30px 60px -20px rgba(0,0,0,.9),inset 4px 0 0 rgba(255,255,255,.08)}
+.d-bg{position:absolute;inset:0;background-size:cover;background-position:center}
+.d-bg.sunset{background:linear-gradient(180deg,#2b1a4d,#b3402e 55%,#f0a35e)}
+.d-bg.ocean{background:linear-gradient(180deg,#04121f,#0a4a5e 55%,#37b8a5)}
+.d-bg.forest{background:linear-gradient(180deg,#07130c,#1d4a26 55%,#8fce6e)}
+.d-sheet{position:absolute;left:0;right:0;bottom:0;height:23%;overflow:hidden;padding:12px 20px 36px;background:rgba(6,6,10,var(--glass,.75));backdrop-filter:blur(22px) saturate(150%);-webkit-backdrop-filter:blur(22px) saturate(150%)}
+.d-pill{display:inline-block;font-size:9px;letter-spacing:.26em;padding:3px 10px;border-radius:99px;border:1px solid rgba(255,255,255,.35);color:rgba(255,255,255,.85);margin-bottom:6px}
+.d-title{font-family:"Noto Serif Thai",serif;font-weight:600;font-size:clamp(20px,3.4vw,26px);line-height:1.35;margin:0;text-shadow:0 2px 18px rgba(0,0,0,.5);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.d-tag{margin:4px 0 0;color:rgba(255,255,255,.78);font-family:"Noto Serif Thai",serif;font-size:13px;line-height:1.6;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.d-ft{position:absolute;left:20px;right:20px;bottom:10px;display:flex;justify-content:space-between;align-items:center;gap:10px;border-top:1px solid rgba(255,255,255,.2);padding-top:7px;font-size:11px}
+.d-au{letter-spacing:.22em;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .cv-glass .c-bg{background:radial-gradient(110% 60% at 50% 0%,hsl(var(--h) 50% 26%/.8),transparent 65%),#0a0a0d}
 .cv-glass .c-in{top:auto;bottom:0;height:23%;display:block;overflow:hidden;padding:3.5cqw 6cqw 11cqw;background:rgba(6,6,10,var(--glass,.75));backdrop-filter:blur(22px) saturate(150%);-webkit-backdrop-filter:blur(22px) saturate(150%)}
 .cv-glass .c-pill{display:inline-block;font-size:2.6cqw;letter-spacing:.26em;padding:1cqw 3cqw;border-radius:99px;border:1px solid rgba(255,255,255,.35);color:rgba(255,255,255,.85);margin-bottom:1.8cqw}
@@ -366,15 +378,19 @@ button:disabled{opacity:.38;cursor:not-allowed}
       <div class="page-head"><div><p class="eyebrow">หน้าปก</p><h1 class="page-title">ออกแบบปกหนังสือ</h1></div></div>
       <div class="cover-grid">
         <div class="cover-stage">
-          <div id="coverPreview"></div>
+          <div><div class="d-cv"><div class="d-bg sunset" id="dBg"></div>
+            <div class="d-sheet" id="dSheet">
+              <span class="d-pill">✦ NOVEL</span>
+              <div class="d-title" id="dTitle"></div>
+              <p class="d-tag" id="dTag"></p>
+              <div class="d-ft"><span class="d-au" id="dAuthor"></span><span id="dYear"></span></div>
+            </div></div></div>
           <div class="row"><button class="btn primary" id="coverRead">อ่านเรื่องนี้</button><button class="btn" id="coverWrite">เขียนต่อ</button></div>
         </div>
         <div class="cover-form">
           <div class="field"><label for="cTitle">ชื่อเรื่อง</label><input class="input" id="cTitle" placeholder="ชื่อนิยาย"></div>
-          <div class="field"><label for="cAuthor">ผู้แต่ง</label><input class="input" id="cAuthor" placeholder="นามปากกา"></div>
           <div class="field"><label for="cTag">คำโปรย</label><input class="input" id="cTag" placeholder="ประโยคสั้น ๆ บนปก"></div>
-          <div class="field"><span class="label">แนวทางหน้าปก</span><div class="row"><button class="btn sm" type="button" id="coverEditorial">Editorial · ตัวอักษรนำ</button><button class="btn sm" type="button" id="coverCinematic">Cinematic · ภาพนำ</button></div><p class="page-sub">เลือกแนวทางก่อน แล้วปรับลายปกและภาพได้ตามต้องการ</p><div class="styles" id="styleList"></div></div>
-          <div class="field"><label for="cHue">โทนสี</label><div><div class="hue-track"></div><input class="range" type="range" min="0" max="360" id="cHue"></div></div>
+          <div class="field"><label for="cAuthor">ผู้แต่ง</label><input class="input" id="cAuthor" placeholder="นามปากกา"></div>
           <div class="field"><span class="label">ภาพพื้นหลัง</span><div class="row" id="sampleRow"><button class="btn sm" type="button" data-sample="sunset">อาทิตย์ตก</button><button class="btn sm" type="button" data-sample="ocean">ทะเล</button><button class="btn sm" type="button" data-sample="forest">ป่า</button></div></div>
           <div class="field"><label for="cGlass">ความขุ่นกระจก (<span id="cGlassVal">75</span>%)</label><input class="range" type="range" min="30" max="95" value="75" id="cGlass"></div>
           <div class="row"><button class="btn" id="cUpload">อัปโหลดภาพปก</button><button class="btn ghost" id="cRemoveImg" hidden>ลบภาพปก</button><input type="file" id="cFile" accept="image/*" hidden></div>
@@ -789,32 +805,32 @@ button:disabled{opacity:.38;cursor:not-allowed}
   /* ---------- cover page ---------- */
   function renderCover() {
     const n = N();
-    $('#cTitle').value = n.title; $('#cAuthor').value = n.author; $('#cTag').value = n.tagline; $('#cHue').value = n.cover.hue;
+    $('#cTitle').value = n.title; $('#cAuthor').value = n.author; $('#cTag').value = n.tagline;
     $('#cGlass').value = (n.cover.glass == null ? 75 : n.cover.glass);
     refreshCover();
   }
   function refreshCover() {
     const n = N(); if (!n) return;
-    $('#coverPreview').innerHTML = coverHTML(n); $('#coverPreview').className = 'cover-mode-' + (n.cover.mode || 'editorial');
-    $('#coverEditorial').classList.toggle('cover-mode-active', (n.cover.mode || 'editorial') === 'editorial'); $('#coverCinematic').classList.toggle('cover-mode-active', n.cover.mode === 'cinematic');
+    $('#dTitle').textContent = n.title || 'เรื่องไม่มีชื่อ';
+    $('#dTag').textContent = n.tagline || '';
+    $('#dAuthor').textContent = n.author || 'นามปากกา';
+    try { $('#dYear').textContent = new Date(n.createdAt).getFullYear() || ''; } catch(e) { $('#dYear').textContent = ''; }
     const hasImg = !!(n.cover.image && n.cover.image.startsWith('data:image/'));
-    const styles = ['glass'];
-    $('#styleList').innerHTML = styles.map(s => `<button class="style-opt${' on'}" data-s="${s}" title="กระจกล่าง">${coverHTML(n, {style:s})}</button>`).join('');
+    const bg = $('#dBg');
+    if (hasImg) { bg.className = 'd-bg'; bg.style.backgroundImage = `url('${n.cover.image}')`; }
+    else { bg.style.backgroundImage = ''; bg.className = 'd-bg ' + (n.cover.sample || 'sunset'); }
+    $('#dSheet').style.setProperty('--glass', ((n.cover.glass == null ? 75 : n.cover.glass) / 100));
     $('#cRemoveImg').hidden = !hasImg && !n.cover.sample;
     $('#cGlassVal').textContent = (n.cover.glass == null ? 75 : n.cover.glass);
-    document.querySelectorAll('#sampleRow [data-sample]').forEach(b => b.classList.toggle('on', !hasImg && n.cover.sample === b.dataset.sample));
+    document.querySelectorAll('#sampleRow [data-sample]').forEach(b => b.classList.toggle('on', !hasImg && (n.cover.sample || 'sunset') === b.dataset.sample));
     $('#crumb').textContent = n.title;
   }
   function touchNovel() { const n = N(); if (n) n.updatedAt = Date.now(); schedulePersist(); }
   [['#cTitle','title'],['#cAuthor','author'],['#cTag','tagline']].forEach(([sel, k]) => $(sel).addEventListener('input', e => {
     const n = N(); n[k] = k === 'title' ? (e.target.value || 'เรื่องไม่มีชื่อ') : e.target.value; touchNovel(); refreshCover();
   }));
-  $('#coverEditorial').onclick = () => { N().cover.mode = 'editorial'; touchNovel(); refreshCover(); };
-  $('#coverCinematic').onclick = () => { N().cover.mode = 'cinematic'; touchNovel(); refreshCover(); };
-  $('#cHue').addEventListener('input', e => { const n = N(); n.cover.hue = +e.target.value; touchNovel(); refreshCover(); });
   $('#cGlass').addEventListener('input', e => { const n = N(); n.cover.glass = +e.target.value; touchNovel(); refreshCover(); });
   $('#sampleRow').addEventListener('click', e => { const b = e.target.closest('[data-sample]'); if (!b) return; const n = N(); n.cover.sample = b.dataset.sample; n.cover.image = ''; touchNovel(); refreshCover(); toast('เปลี่ยนภาพพื้นหลังแล้ว'); });
-  $('#styleList').addEventListener('click', e => { const b = e.target.closest('[data-s]'); if (!b) return; N().cover.style = b.dataset.s; touchNovel(); refreshCover(); });
   $('#cUpload').onclick = () => $('#cFile').click();
   $('#cRemoveImg').onclick = () => { const n = N(); n.cover.image = ''; n.cover.sample = ''; touchNovel(); refreshCover(); };
   $('#cFile').onchange = async e => {
