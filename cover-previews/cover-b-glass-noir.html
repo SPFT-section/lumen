@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="th"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>B — Glass Noir (preview)</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=IBM+Plex+Sans+Thai:wght@300;400;500;600&family=Noto+Serif+Thai:wght@400;500;600&display=swap">
+<style>
+:root{--h:265}
+*{box-sizing:border-box}body{margin:0;background:#070707;color:#f2f2ef;font-family:"IBM Plex Sans Thai",system-ui,sans-serif;padding:32px 20px}
+.wrap{max-width:1000px;margin:0 auto;display:grid;grid-template-columns:minmax(280px,360px) 1fr;gap:40px;align-items:start}
+@media(max-width:760px){.wrap{grid-template-columns:1fr}}
+.cover-b{aspect-ratio:2/3;border-radius:18px;overflow:hidden;position:relative;color:#fff;
+ box-shadow:0 30px 70px -20px rgba(0,0,0,.9);
+ background:radial-gradient(110% 60% at 15% 0%,hsl(var(--h) 75% 45%/.9),transparent 60%),
+ radial-gradient(100% 65% at 90% 100%,hsl(calc(var(--h) + 60) 75% 32%/.9),transparent 62%),#0a0a0d}
+.cover-b::before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 70% 20%,rgba(255,255,255,.14),transparent 40%)}
+.glass{position:absolute;inset:9% 8%;border-radius:16px;padding:26px 24px;display:flex;flex-direction:column;
+ background:linear-gradient(150deg,rgba(20,20,22,.72),rgba(8,8,10,.55));
+ border:1px solid rgba(255,255,255,.16);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
+ box-shadow:0 20px 50px rgba(0,0,0,.45),inset 1px 0 0 rgba(255,255,255,.12)}
+.pill{align-self:flex-start;font-size:11px;letter-spacing:.18em;padding:5px 12px;border-radius:99px;
+ border:1px solid hsl(var(--h) 70% 70%/.5);color:hsl(var(--h) 80% 80%);margin-bottom:16px}
+.title{font-family:"Noto Serif Thai",serif;font-weight:600;font-size:clamp(30px,4.8vw,42px);line-height:1.3;margin:0}
+.tag{color:rgba(255,255,255,.68);font-size:14px;line-height:1.8;margin:14px 0 0;font-family:"Noto Serif Thai",serif}
+.spacer{flex:1}
+.row{display:flex;align-items:center;gap:10px;margin-top:18px}
+.avatar{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;font-size:16px;
+ background:linear-gradient(140deg,hsl(var(--h) 60% 50%),hsl(calc(var(--h) + 60) 60% 30%));border:1px solid rgba(255,255,255,.3)}
+.author{font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:rgba(255,255,255,.85)}
+.panel{border:1px solid rgba(255,255,255,.1);border-radius:16px;padding:20px;background:#0e0e0e}
+.field{margin-bottom:14px}.field label{display:block;font-size:12px;color:#999;margin-bottom:6px}
+.input{width:100%;background:#000;border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:10px 12px;color:#fff}
+input[type=range]{width:100%;accent-color:#fff}.note{color:#777;font-size:13px;line-height:1.7}
+</style></head><body>
+<div class="wrap">
+<div><div class="cover-b" id="cv"><div class="glass">
+<span class="pill">✦ NOVEL</span>
+<h1 class="title" id="t">ราตรีแห่งดวงดาว</h1>
+<p class="tag" id="g">เมื่อแสงสุดท้ายดับลง เรื่องราวของเราจึงเริ่มต้น</p>
+<div class="spacer"></div>
+<div class="row"><div class="avatar">✦</div><span class="author" id="a">นามปากกา</span></div>
+</div></div></div>
+<div class="panel">
+<h2 style="margin:0 0 4px">B — Glass Noir</h2>
+<p class="note">กระจกดำลอยบนแสงสี: ดูทันสมัย เด่นบนชั้นหนังสือ (shelf) เพราะมีมิติ ต่างจากแบบเดิมที่เป็น gradient เต็มปก</p>
+<div class="field"><label>ชื่อเรื่อง</label><input class="input" id="in-t" value="ราตรีแห่งดวงดาว"></div>
+<div class="field"><label>คำโปรย</label><input class="input" id="in-g" value="เมื่อแสงสุดท้ายดับลง เรื่องราวของเราจึงเริ่มต้น"></div>
+<div class="field"><label>ผู้แต่ง</label><input class="input" id="in-a" value="นามปากกา"></div>
+<div class="field"><label>โทนสี (<span id="hv">265</span>)</label><input type="range" id="in-h" min="0" max="360" value="265"></div>
+</div></div>
+<script>
+const $=s=>document.querySelector(s);
+$('#in-t').oninput=e=>$('#t').textContent=e.target.value||'เรื่องไม่มีชื่อ';
+$('#in-g').oninput=e=>$('#g').textContent=e.target.value;
+$('#in-a').oninput=e=>$('#a').textContent=e.target.value||'นามปากกา';
+$('#in-h').oninput=e=>{document.documentElement.style.setProperty('--h',e.target.value);$('#hv').textContent=e.target.value};
+</script></body></html>

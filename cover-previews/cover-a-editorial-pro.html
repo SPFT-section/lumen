@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="th"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>A — Editorial Pro (preview)</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=IBM+Plex+Sans+Thai:wght@300;400;500;600&family=Noto+Serif+Thai:wght@400;500;600&display=swap">
+<style>
+:root{--h:32}
+*{box-sizing:border-box}body{margin:0;background:#070707;color:#f2f2ef;font-family:"IBM Plex Sans Thai",system-ui,sans-serif;padding:32px 20px}
+.wrap{max-width:1000px;margin:0 auto;display:grid;grid-template-columns:minmax(280px,360px) 1fr;gap:40px;align-items:start}
+@media(max-width:760px){.wrap{grid-template-columns:1fr}}
+/* ---- COVER A ---- */
+.cover-a{aspect-ratio:2/3;border-radius:6px 14px 14px 6px;overflow:hidden;position:relative;background:#111;color:#f5f3ec;
+ box-shadow:0 30px 60px -20px rgba(0,0,0,.85),inset 4px 0 0 rgba(255,255,255,.08);
+ background-image:repeating-linear-gradient(0deg,rgba(255,255,255,.014) 0 1px,transparent 1px 4px)}
+.cover-a .inner{position:absolute;inset:0;padding:13% 11% 10%;display:flex;flex-direction:column}
+.eyebrow{font-size:11px;letter-spacing:.34em;color:hsl(var(--h) 60% 68%);margin-bottom:14px}
+.rule{width:52px;height:3px;background:hsl(var(--h) 70% 55%);margin:0 0 18px}
+.title{font-family:"Noto Serif Thai",serif;font-weight:600;font-size:clamp(28px,4.6vw,40px);line-height:1.35;margin:0}
+.tag{margin:16px 0 0;padding-left:14px;border-left:2px solid hsl(var(--h) 40% 50% / .6);color:rgba(245,243,236,.66);
+ font-family:"Noto Serif Thai",serif;font-size:15px;line-height:1.8}
+.spacer{flex:1}
+.foot{border-top:1px solid rgba(255,255,255,.14);padding-top:14px;display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+.author{font-size:12px;letter-spacing:.24em;text-transform:uppercase;color:rgba(245,243,236,.85)}
+.year{font-size:12px;color:rgba(245,243,236,.45)}
+/* controls */
+.panel{border:1px solid rgba(255,255,255,.1);border-radius:16px;padding:20px;background:#0e0e0e}
+.field{margin-bottom:14px}.field label{display:block;font-size:12px;color:#999;margin-bottom:6px}
+.input{width:100%;background:#000;border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:10px 12px;color:#fff}
+input[type=range]{width:100%;accent-color:#fff}
+.note{color:#777;font-size:13px;line-height:1.7}
+</style></head><body>
+<div class="wrap">
+<div><div class="cover-a" id="cv"><div class="inner">
+<div><div class="eyebrow">LUMEN · NOVEL</div><div class="rule"></div>
+<h1 class="title" id="t">ราตรีแห่งดวงดาว</h1>
+<p class="tag" id="g">เมื่อแสงสุดท้ายดับลง เรื่องราวของเราจึงเริ่มต้น</p></div>
+<div class="spacer"></div>
+<div class="foot"><span class="author" id="a">นามปากกา</span><span class="year">2026</span></div>
+</div></div></div>
+<div class="panel">
+<h2 style="margin:0 0 4px">A — Editorial Pro</h2>
+<p class="note">มินิมอลแบบสำนักพิมพ์จริง: ตัวอักษรเป็นพระเอก เส้น accent เปลี่ยนตามโทนสี ไม่มี gradient ฉูดฉาด</p>
+<div class="field"><label>ชื่อเรื่อง</label><input class="input" id="in-t" value="ราตรีแห่งดวงดาว"></div>
+<div class="field"><label>คำโปรย</label><input class="input" id="in-g" value="เมื่อแสงสุดท้ายดับลง เรื่องราวของเราจึงเริ่มต้น"></div>
+<div class="field"><label>ผู้แต่ง</label><input class="input" id="in-a" value="นามปากกา"></div>
+<div class="field"><label>โทนสี (<span id="hv">32</span>)</label><input type="range" id="in-h" min="0" max="360" value="32"></div>
+<p class="note">ถ้าชอบอันนี้: จะเพิ่มเป็น style ที่ 5 ในหน้า “ปก” ของแอปจริง (ใช้แทน/คู่กับ aurora เดิมได้)</p>
+</div></div>
+<script>
+const $=s=>document.querySelector(s);
+$('#in-t').oninput=e=>$('#t').textContent=e.target.value||'เรื่องไม่มีชื่อ';
+$('#in-g').oninput=e=>$('#g').textContent=e.target.value;
+$('#in-a').oninput=e=>$('#a').textContent=e.target.value||'นามปากกา';
+$('#in-h').oninput=e=>{document.documentElement.style.setProperty('--h',e.target.value);$('#hv').textContent=e.target.value};
+</script></body></html>
