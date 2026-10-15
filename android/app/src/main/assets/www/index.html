@@ -290,11 +290,13 @@ button:disabled{opacity:.38;cursor:not-allowed}
 body.tlock{overflow:hidden}
 #tshade{position:fixed;inset:0;background:rgba(0,0,0,.74);z-index:200;opacity:0;pointer-events:none;transition:opacity .4s}
 #tshade.on{opacity:1;pointer-events:auto}
-#tring{position:fixed;border:2px solid #fff;border-radius:14px;box-shadow:0 0 0 6px rgba(255,255,255,.12),0 0 34px rgba(255,255,255,.3);z-index:201;pointer-events:none;transition:left .65s cubic-bezier(.22,1,.36,1),top .65s cubic-bezier(.22,1,.36,1),width .65s cubic-bezier(.22,1,.36,1),height .65s cubic-bezier(.22,1,.36,1),opacity .35s;animation:tringp 1.6s ease-in-out infinite}
+#tring{position:fixed;border:2px solid #fff;border-radius:14px;box-shadow:0 0 0 6px rgba(255,255,255,.12),0 0 34px rgba(255,255,255,.3);z-index:201;pointer-events:none;transition:left .8s cubic-bezier(.22,1,.36,1),top .8s cubic-bezier(.22,1,.36,1),width .8s cubic-bezier(.22,1,.36,1),height .8s cubic-bezier(.22,1,.36,1),opacity .45s;animation:tringp 1.6s ease-in-out infinite}
 @keyframes tringp{50%{box-shadow:0 0 0 10px rgba(255,255,255,.06),0 0 44px rgba(255,255,255,.4)}}
-#ttext{position:fixed;z-index:202;pointer-events:none;max-width:min(320px,calc(100vw - 40px));text-shadow:0 2px 16px #000;transition:left .55s cubic-bezier(.22,1,.36,1),top .55s cubic-bezier(.22,1,.36,1),opacity .35s}
-#ttext .tkick{font-size:11px;letter-spacing:.3em;color:var(--ok);margin-bottom:8px}
-#ttext h3{font-family:var(--font-serif);font-weight:500;font-size:24px;line-height:1.55;margin:0;min-height:3.1em}
+#ttext{position:fixed;z-index:202;pointer-events:none;max-width:min(300px,calc(100vw - 40px));text-shadow:0 2px 16px #000;transition:left .8s cubic-bezier(.22,1,.36,1),top .8s cubic-bezier(.22,1,.36,1),opacity .45s}
+#ttext .tstep{display:inline-flex;align-items:center;gap:8px;padding:5px 13px;border-radius:99px;background:rgba(18,18,22,.72);border:1px solid var(--line-2);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);font-size:11px;letter-spacing:.24em;color:var(--ink)}
+#ttext .tstep b{color:var(--ok);font-weight:600}
+#ttext .tkick{margin:14px 0 8px;font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--ink-3)}
+#ttext h3{font-family:var(--font-serif);font-weight:400;font-size:27px;line-height:1.5;margin:0;min-height:2.6em}
 #ttext .tcaret{display:inline-block;width:2px;height:1em;background:#fff;vertical-align:-2px;animation:tblink 1s steps(1) infinite}
 @keyframes tblink{50%{opacity:0}}
 #ttext .tsub{color:#cfcfcf;font-size:13px;line-height:1.8;margin:8px 0 0}
@@ -598,7 +600,7 @@ body.tlock .view.on{animation:tviewin .45s cubic-bezier(.22,1,.36,1)}
 
 <div class="toast" id="toast"></div>
 <div id="tshade"></div><div id="tring" hidden></div>
-<div id="ttext" hidden><div class="tkick"></div><h3><span class="th"></span><span class="tcaret"></span></h3><p class="tsub"></p></div>
+<div id="ttext" hidden><div class="tstep"><b>01</b><span>/ 17</span></div><div class="tkick"></div><h3><span class="th"></span><span class="tcaret"></span></h3><p class="tsub"></p></div>
 <div id="tbar"></div><button id="tskip">ข้าม ✕</button>
 <input type="file" id="fileInput" accept=".txt,.html,.htm" hidden>
 
@@ -1293,26 +1295,32 @@ body.tlock .view.on{animation:tviewin .45s cubic-bezier(.22,1,.36,1)}
     return n.id;
   }
   function tourPlace(r) {
-    const t = $('#ttext');
-    let x = Math.max(20, (innerWidth - 360) / 2), y = innerHeight / 2 - 120;
-    if (r) {
-      const below = innerHeight - r.bottom - 20, above = r.top - 20;
-      y = (below > 200 || below > above) ? (r.bottom + 18) : Math.max(64, r.top - 200);
-      x = Math.min(Math.max(20, r.left), innerWidth - 340);
+    const t = $('#ttext'), W = 300;
+    if (!r) {
+      t.style.left = Math.max(20, (innerWidth - 360) / 2) + 'px';
+      t.style.top = Math.max(64, innerHeight / 2 - 160) + 'px';
+      return;
     }
-    t.style.left = x + 'px'; t.style.top = Math.max(60, y) + 'px';
+    let x = r.left + r.width + 26, y = r.top - 10;
+    if (x + W > innerWidth - 16) x = r.left - W - 26;
+    if (x < 16) { x = Math.max(16, r.left); y = r.bottom + 20; }
+    if (y + 270 > innerHeight - 60) y = Math.max(64, r.top - 280);
+    t.style.left = Math.max(16, x) + 'px'; t.style.top = Math.max(60, y) + 'px';
   }
   function tourGo(i) {
     tourIdx = i; const d = TOUR[tourIdx];
     document.body.classList.add('tlock');
     $('#tshade').classList.add('on'); $('#tskip').style.display = 'block';
-    $('#tring').hidden = true;
     closeSettings();
     if (d.v) go(d.v, {novel: tourNovel});
     if (d.modal === 'settings') openSettings();
     $('#tbar').style.width = d.bar + '%';
     const ring = $('#tring'), t = $('#ttext');
     t.hidden = false;
+    ring.hidden = false;
+    if (!d.sel) ring.style.opacity = 0;
+    $('#ttext .tstep b').textContent = String(tourIdx + 1).padStart(2, '0');
+    $('#ttext .tstep span').textContent = '/ ' + String(TOUR.length).padStart(2, '0');
     $('#ttext .tkick').textContent = d.kick;
     const sb = $('#ttext .tsub'); sb.textContent = '';
     clearInterval(tourType);
@@ -1322,13 +1330,13 @@ body.tlock .view.on{animation:tviewin .45s cubic-bezier(.22,1,.36,1)}
       else { clearInterval(tourType); sb.textContent = d.s; }
     }, 38);
     const show = () => {
-      if (!d.sel) { ring.hidden = true; tourPlace(null); }
+      if (!d.sel) { ring.style.opacity = 0; tourPlace(null); }
       else {
         const el = document.querySelector(d.sel);
         if (!el || !el.offsetParent) { tourGo((tourIdx + 1) % TOUR.length); return; }
         try { el.scrollIntoView({block: 'nearest'}); } catch(e) {}
           const r = el.getBoundingClientRect();
-          ring.hidden = false;
+          ring.style.opacity = 1;
           ring.style.left = (r.left - 10) + 'px'; ring.style.top = (r.top - 10) + 'px';
           ring.style.width = (r.width + 20) + 'px'; ring.style.height = (r.height + 20) + 'px';
           tourPlace(r);
