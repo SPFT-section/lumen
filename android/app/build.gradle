@@ -10,13 +10,24 @@ android {
         applicationId "com.lumen.studio"
         minSdk 24
         targetSdk 34
-        versionCode 5
-        versionName "1.4"
+        versionCode 6
+        versionName "1.5"
     }
 
     signingConfigs {
-        debug {
+        // Stable key committed on purpose so every CI build can update the previous APK.
+        // This is a free personal app; the key is not used for anything else.
+        release {
+            storeFile file('lumen-release.p12')
+            storePassword 'lumen-studio-2026'
+            keyAlias 'lumen'
+            keyPassword 'lumen-studio-2026'
+            storeType 'PKCS12'
             // Explicit v1+v2 so the APK installs from file managers on all API 24+ devices
+            v1SigningEnabled true
+            v2SigningEnabled true
+        }
+        debug {
             v1SigningEnabled true
             v2SigningEnabled true
         }
@@ -26,6 +37,7 @@ android {
         release {
             minifyEnabled false
             shrinkResources false
+            signingConfig signingConfigs.release
         }
         debug {
             signingConfig signingConfigs.debug
