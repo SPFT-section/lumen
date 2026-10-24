@@ -2,20 +2,63 @@ package com.lumen.studio;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.webkit.JavascriptInterface;
 import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.Toast;
+
+import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 
 public class MainActivity extends Activity {
     private WebView web;
     private ValueCallback<Uri[]> filePathCallback;
+    private String pendingSaveName;
+    private String pendingSaveText;
     private static final int FILE_CHOOSER_REQUEST = 1001;
+    private static final int SAVE_DOCUMENT_REQUEST = 1002;
+
+    /** Small bridge so JSON export and copy actually work inside the WebView. */
+    public class Bridge {
+        @JavascriptInterface
+        public void copy(final String text) {
+            runOnUiThread(() -> {
+                try {
+                    ClipboardManager cm = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+                    cm.setPrimaryClip(ClipData.newPlainText("LUMEN", text == null ? "" : text));
+                } catch (Exception ignored) {}
+            });
+        }
+
+        @JavascriptInterface
+        public void saveFile(final String name, final String text) {
+            runOnUiThread(() -> {
+                pendingSaveName = name;
+                pendingSaveText = text;
+                Intent intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
+                intent.addCategory(Intent.CATEGORY_OPENABLE);
+                intent.setType("application/json");
+                intent.putExtra(Intent.EXTRA_TITLE, name);
+                try {
+                    startActivityForResult(intent, SAVE_DOCUMENT_REQUEST);
+                } catch (Exception e) {
+                    pendingSaveName = null;
+                    pendingSaveText = null;
+                    Toast.makeText(MainActivity.this, "เปิดหน้าบันทึกไฟล์ไม่ได้", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+    }
 
     @SuppressLint("SetJavaScriptEnabled")
     @Override
@@ -34,6 +77,8 @@ public class MainActivity extends Activity {
         s.setLoadWithOverviewMode(true);
         s.setUseWideViewPort(true);
         s.setCacheMode(WebSettings.LOAD_DEFAULT);
+
+        web.addJavascriptInterface(new Bridge(), "LumenBridge");
 
         web.setWebViewClient(new WebViewClient() {
             @Override
@@ -92,6 +137,22 @@ public class MainActivity extends Activity {
             }
             filePathCallback.onReceiveValue(results);
             filePathCallback = null;
+            return;
+        }
+        if (requestCode == SAVE_DOCUMENT_REQUEST) {
+            if (resultCode == Activity.RESULT_OK && data != null && data.getData() != null) {
+                try (OutputStream os = getContentResolver().openOutputStream(data.getData())) {
+                    if (os != null) {
+                        os.write((pendingSaveText == null ? "" : pendingSaveText)
+                                .getBytes(StandardCharsets.UTF_8));
+                        Toast.makeText(this, "บันทึกไฟล์แล้ว", Toast.LENGTH_SHORT).show();
+                    }
+                } catch (Exception e) {
+                    Toast.makeText(this, "บันทึกไฟล์ไม่สำเร็จ", Toast.LENGTH_SHORT).show();
+                }
+            }
+            pendingSaveName = null;
+            pendingSaveText = null;
         }
     }
 
