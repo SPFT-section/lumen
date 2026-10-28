@@ -1,0 +1,66 @@
+{
+  "id": "./lumen.html",
+  "name": "LUMEN Writing Studio — ห้องเขียนนิยาย",
+  "short_name": "LUMEN",
+  "description": "ห้องเขียนนิยายและคลังข้อมูลโลกนิยายในเครื่องคุณ ทำงานออฟไลน์ได้ พร้อมระบบสำรองข้อมูลอัตโนมัติ",
+  "lang": "th",
+  "dir": "ltr",
+  "start_url": "./lumen.html?source=pwa",
+  "scope": "./",
+  "display": "standalone",
+  "display_override": ["window-controls-overlay", "standalone", "minimal-ui"],
+  "orientation": "any",
+  "background_color": "#070707",
+  "theme_color": "#070707",
+  "categories": ["books", "productivity", "education", "entertainment"],
+  "icons": [
+    {
+      "src": "./icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "./icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "./icons/icon-maskable-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "./icons/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "เขียนต่อ",
+      "short_name": "เขียน",
+      "description": "เปิดบทล่าสุดที่คุณแก้ไข",
+      "url": "./lumen.html?source=pwa&go=write",
+      "icons": [{ "src": "./icons/icon-192.png", "sizes": "192x192", "type": "image/png" }]
+    },
+    {
+      "name": "คลังข้อมูล",
+      "short_name": "คลัง",
+      "description": "เปิดคลังข้อมูลโลกนิยายของเรื่องล่าสุด",
+      "url": "./lumen.html?source=pwa&go=data",
+      "icons": [{ "src": "./icons/icon-192.png", "sizes": "192x192", "type": "image/png" }]
+    },
+    {
+      "name": "เริ่มเรื่องใหม่",
+      "short_name": "เรื่องใหม่",
+      "description": "สร้างนิยายเรื่องใหม่",
+      "url": "./lumen.html?source=pwa&new=1",
+      "icons": [{ "src": "./icons/icon-192.png", "sizes": "192x192", "type": "image/png" }]
+    }
+  ],
+  "prefer_related_applications": false
+}

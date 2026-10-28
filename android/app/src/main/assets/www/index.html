@@ -1,9 +1,24 @@
-<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<!doctype html><html lang="th"><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style>
 <title>LUMEN Writing Studio</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=IBM+Plex+Sans+Thai:wght@300;400;500;600&family=Noto+Serif+Thai:wght@300;400;500;600&display=swap">
+
+<!-- PWA -->
+<meta name="description" content="LUMEN Writing Studio — ห้องเขียนนิยายและคลังข้อมูลโลกนิยาย ทำงานออฟไลน์ได้ พร้อมสำรองข้อมูลอัตโนมัติ">
+<meta name="theme-color" content="#070707">
+<meta name="color-scheme" content="dark">
+<meta name="application-name" content="LUMEN">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="LUMEN">
+<meta name="format-detection" content="telephone=no">
+<link rel="manifest" href="./manifest.webmanifest">
+<link rel="icon" type="image/svg+xml" href="./icons/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="./icons/favicon-32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="./icons/apple-touch-icon.png">
 <style>
 /* Layout: black glass studio. Top bar + sub-nav (ปก / เรื่อง / บท / เขียน / อ่าน) over six full-height views; covers carry all the colour. */
 :root{
@@ -457,7 +472,217 @@ body.tlock .view:not([hidden]){animation:none}
   .shelf{gap:22px 14px}
 }
 @keyframes sheetIn{from{opacity:.5;transform:translateY(100%)}}
+
+/* ============================================================
+   PWA status / install / update
+   ============================================================ */
+.offline-bar{flex:0 0 auto;display:flex;align-items:center;justify-content:center;gap:8px;padding:7px 14px;font-size:12px;letter-spacing:.02em;color:#ffe1a8;background:linear-gradient(180deg,rgba(70,54,18,.92),rgba(38,30,12,.88));border-bottom:1px solid rgba(224,192,122,.25);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
+.offline-bar .dot{width:6px;height:6px;background:#e0c07a;box-shadow:0 0 10px rgba(224,192,122,.7)}
+#updateBar{position:fixed;z-index:206;left:50%;bottom:calc(18px + env(safe-area-inset-bottom,0px));transform:translate(-50%,18px);opacity:0;pointer-events:none;display:flex;align-items:center;gap:10px;padding:9px 10px 9px 16px;border-radius:999px;border:1px solid var(--line-2);background:rgba(18,18,20,.96);box-shadow:0 18px 50px rgba(0,0,0,.6);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);font-size:12.5px;transition:.28s var(--ease)}
+#updateBar.on{opacity:1;transform:translate(-50%,0);pointer-events:auto}
+#updateBar button{height:30px;border-radius:999px;padding:0 12px;border:1px solid var(--line);background:var(--fill);font-size:12px}
+#updateBar button.primary{background:#f0f0ed;color:#0b0b0b;border-color:#fff}
+#installBtn{color:var(--ok)}
+#installBtn .icon{stroke-width:1.9}
+.pwa-badge{display:inline-flex;align-items:center;gap:5px;font-size:10px;letter-spacing:.08em;padding:2px 7px;border-radius:999px;border:1px solid var(--line);color:var(--ink-3);vertical-align:1px}
+.pwa-badge.ok{color:var(--ok);border-color:rgba(143,208,164,.3)}
+.settings-extra{display:flex;flex-direction:column;gap:10px;border-top:1px solid var(--line);padding-top:14px;margin-top:4px}
+.settings-extra .srow{border-top:0;padding:0}
+.srow.stack{flex-direction:column;align-items:stretch;gap:9px}
+.srow-head{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.storage-meter{height:6px;border-radius:999px;background:var(--fill-2);overflow:hidden}
+.storage-meter i{display:block;height:100%;width:0;border-radius:inherit;background:linear-gradient(90deg,#8fd0a4,#e0c07a);transition:width .4s var(--ease)}
+.storage-line{display:flex;justify-content:space-between;gap:10px;font-size:11px;color:var(--ink-3)}
+.backup-list{display:flex;flex-direction:column;gap:6px}
+.backup-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 10px;border:1px solid var(--line);border-radius:10px;background:rgba(255,255,255,.025)}
+.backup-row b{display:block;font-size:12px;font-weight:500}
+.backup-row span{display:block;font-size:10.5px;color:var(--ink-4);margin-top:2px}
+
+/* ============================================================
+   Archive / knowledge workspace v2
+   ============================================================ */
+.data-wrap{width:min(100%,1480px)}
+.data-head{margin-bottom:22px}
+.data-head-actions{align-items:center}
+.data-layout{display:grid;grid-template-columns:216px minmax(0,1fr) minmax(340px,410px);gap:16px;align-items:start}
+.data-categories{position:sticky;top:12px;max-height:calc(100vh - 130px);overflow:auto;padding:14px;gap:0}
+.data-categories .label{margin:0 0 7px}
+.data-cat-list{display:flex;flex-direction:column;gap:3px}
+.data-cat{display:flex;align-items:center;gap:9px;width:100%;padding:9px 10px;border-radius:10px;border:1px solid transparent;background:transparent;color:var(--ink-3);font-size:12.5px;text-align:left;transition:background .16s var(--ease),color .16s var(--ease),border-color .16s var(--ease)}
+.data-cat:hover{background:var(--fill);color:var(--ink-2)}
+.data-cat.on{background:var(--fill-2);border-color:var(--line);color:#fff}
+.data-cat .data-cat-i{width:22px;height:22px;flex:0 0 22px;display:grid;place-items:center;border-radius:7px;background:color-mix(in srgb,var(--c,#fff) 14%,transparent);color:var(--c,#fff);font-size:11px;border:1px solid color-mix(in srgb,var(--c,#fff) 20%,transparent)}
+.data-cat .data-cat-t{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.data-cat small{font-size:10px;color:var(--ink-4);background:rgba(255,255,255,.05);border-radius:999px;padding:2px 6px;min-width:20px;text-align:center}
+.data-cat.on small{color:var(--ink-2);background:rgba(255,255,255,.1)}
+.data-divider{height:1px;background:var(--line);margin:13px 0}
+.data-side-block{display:flex;flex-direction:column;gap:7px}
+.data-tagcloud{display:flex;flex-wrap:wrap;gap:5px}
+.data-tag-filter{display:inline-flex;align-items:center;gap:4px;padding:4px 8px;border-radius:999px;border:1px solid var(--line);background:transparent;color:var(--ink-3);font-size:11px;max-width:100%;transition:.16s}
+.data-tag-filter span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.data-tag-filter small{color:var(--ink-4);font-size:9.5px}
+.data-tag-filter:hover{background:var(--fill);color:var(--ink-2)}
+.data-tag-filter.on{background:#efefec;border-color:#fff;color:#0b0b0b}
+.data-tag-filter.on small{color:#555}
+.data-tag-empty{font-size:11px;color:var(--ink-4);line-height:1.6}
+.data-storage-box{display:flex;flex-direction:column;gap:6px}
+.data-storage-box .data-meter{height:5px;border-radius:999px;background:var(--fill-2);overflow:hidden}
+.data-storage-box .data-meter i{display:block;height:100%;background:linear-gradient(90deg,#8fd0a4,#e0c07a)}
+.data-storage-line{display:flex;justify-content:space-between;font-size:10.5px;color:var(--ink-4)}
+.data-main{min-width:0}
+.data-tools{display:flex;gap:8px;margin-bottom:10px}
+.data-tools .search{flex:1 1 auto;min-width:0}
+.data-tools .select{width:auto;min-width:132px;height:40px;padding-top:0;padding-bottom:0}
+.data-seg{display:flex;align-items:center;gap:2px;padding:3px;border:1px solid var(--line);border-radius:12px;background:rgba(0,0,0,.3)}
+.data-seg button{width:32px;height:32px;border:0;border-radius:9px;background:transparent;color:var(--ink-3);display:grid;place-items:center;font-size:13px;transition:.16s}
+.data-seg button.on{background:#efefec;color:#0b0b0b}
+.data-seg button:hover:not(.on){background:var(--fill);color:var(--ink)}
+.data-filters{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:8px;min-height:0}
+.data-filter-chip{display:inline-flex;align-items:center;gap:5px;font-size:11px;color:var(--ink-2);border:1px solid var(--line);background:var(--fill);border-radius:999px;padding:3px 5px 3px 9px}
+.data-filter-chip button{width:16px;height:16px;display:grid;place-items:center;border:0;border-radius:50%;background:rgba(255,255,255,.08);color:var(--ink-3);font-size:10px;line-height:1}
+.data-filter-chip button:hover{background:rgba(255,255,255,.16);color:#fff}
+.data-count{display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:11.5px;color:var(--ink-4);margin:0 0 9px;min-height:18px}
+.data-count b{color:var(--ink-2);font-weight:500}
+.data-count button{border:0;background:transparent;color:var(--ink-3);font-size:11px;text-decoration:underline;text-underline-offset:3px}
+.data-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(236px,1fr));gap:10px}
+.data-list.layout-cards{grid-template-columns:repeat(2,minmax(0,1fr))}
+.data-list.layout-list{grid-template-columns:1fr}
+.data-card{position:relative;display:flex;flex-direction:column;gap:8px;min-width:0;padding:14px;border:1px solid var(--line);border-radius:15px;background:linear-gradient(150deg,rgba(255,255,255,.045),rgba(255,255,255,.018));text-align:left;cursor:pointer;transition:transform .18s var(--ease),border-color .18s var(--ease),background .18s var(--ease)}
+.data-card:hover{transform:translateY(-1px);border-color:var(--line-2);background:linear-gradient(150deg,rgba(255,255,255,.075),rgba(255,255,255,.03))}
+.data-card.active{border-color:rgba(255,255,255,.42);background:linear-gradient(150deg,rgba(255,255,255,.09),rgba(255,255,255,.04));box-shadow:0 0 0 1px rgba(255,255,255,.06),0 14px 34px rgba(0,0,0,.3)}
+.data-card-top{display:flex;gap:10px;align-items:flex-start}
+.data-card-icon{width:34px;height:34px;flex:0 0 34px;border-radius:10px;border:1px solid color-mix(in srgb,var(--c,#fff) 22%,transparent);background:color-mix(in srgb,var(--c,#fff) 12%,transparent);color:var(--c,#fff);display:grid;place-items:center;font-size:15px}
+.data-card-main{min-width:0;flex:1}
+.data-card h3{font-size:13.5px;font-weight:500;margin:0 0 3px;line-height:1.45;overflow-wrap:anywhere}
+.data-card h3 mark{background:rgba(224,192,122,.28);color:#ffe6b5;border-radius:3px;padding:0 1px}
+.data-card-meta{display:flex;align-items:center;gap:5px;flex-wrap:wrap;font-size:10.5px;color:var(--ink-4)}
+.data-card-meta .pin{color:var(--warn)}
+.data-card-pin{align-self:flex-start;border:0;background:transparent;color:var(--ink-4);font-size:13px;line-height:1;padding:2px}
+.data-card-pin.on{color:var(--warn);text-shadow:0 0 10px rgba(224,192,122,.45)}
+.data-card p{font-size:12px;line-height:1.65;color:var(--ink-3);margin:0;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;overflow-wrap:anywhere}
+.data-card p mark{background:rgba(224,192,122,.22);color:#f4dfb4;border-radius:3px}
+.data-card .data-tags{margin-top:auto}
+.data-tag{font-size:10px;color:var(--ink-3);border:1px solid var(--line);padding:2px 7px;border-radius:999px;background:rgba(255,255,255,.02)}
+.data-tag.on{color:#0b0b0b;background:#efefec;border-color:#fff}
+.data-list.layout-list .data-card{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:4px 14px;padding:12px 14px}
+.data-list.layout-list .data-card-top{grid-column:1}
+.data-list.layout-list .data-card p{grid-column:1;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.data-list.layout-list .data-card .data-tags{grid-column:1}
+.data-list.layout-list .data-card-linkcount{grid-column:2;grid-row:1;align-self:center}
+.data-card-linkcount{display:inline-flex;align-items:center;gap:4px;font-size:10.5px;color:var(--ink-4)}
+.data-empty{grid-column:1/-1;border:1px dashed rgba(255,255,255,.16);border-radius:16px;padding:34px 18px;text-align:center;color:var(--ink-3);line-height:1.9;font-size:12.5px}
+.data-empty b{color:var(--ink)}
+.data-empty .row{justify-content:center;margin-top:12px}
+
+/* detail */
+.data-detail{position:sticky;top:12px;padding:0;gap:0;overflow:hidden;max-height:calc(100vh - 130px);display:flex;flex-direction:column;background:linear-gradient(160deg,rgba(24,24,27,.94),rgba(9,9,11,.92))}
+.data-detail-bar{flex:0 0 auto;display:flex;align-items:center;justify-content:space-between;gap:8px;padding:11px 13px;border-bottom:1px solid var(--line);background:rgba(255,255,255,.02)}
+.data-detail-kicker{display:flex;align-items:center;gap:7px;min-width:0;font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-3)}
+.data-detail-kicker .i{width:20px;height:20px;flex:0 0 20px;display:grid;place-items:center;border-radius:6px;background:color-mix(in srgb,var(--c,#fff) 13%,transparent);color:var(--c,#fff);font-size:10px;border:1px solid color-mix(in srgb,var(--c,#fff) 20%,transparent)}
+.data-detail-tools{display:flex;align-items:center;gap:2px;flex:0 0 auto}
+.data-detail-tools .icon-btn{width:30px;height:30px;border-radius:9px}
+.data-detail-tools .icon-btn.on{color:var(--warn);background:rgba(224,192,122,.1)}
+.data-detail-scroll{flex:1 1 auto;min-height:0;overflow:auto;padding:16px}
+.data-detail-empty{min-height:280px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:9px;color:var(--ink-2);padding:24px 18px;flex:1}
+.data-detail-empty .data-empty-mark{font-family:var(--font-display);font-size:44px;color:var(--ink-3);line-height:1}
+.data-detail-empty strong{font-weight:500;font-size:14px}
+.data-detail-empty p{margin:0;font-size:12px;line-height:1.7}
+.data-empty-cats{display:flex;flex-wrap:wrap;gap:5px;justify-content:center;margin-top:6px}
+.data-empty-cats button{font-size:10.5px;padding:4px 9px;border-radius:999px;border:1px solid var(--line);background:var(--fill);color:var(--ink-3)}
+.data-title-input{width:100%;border:0;border-bottom:1px solid transparent;background:transparent;color:#fff;font-family:var(--font-serif);font-size:23px;line-height:1.45;padding:1px 0 5px;outline:none;transition:border-color .15s}
+.data-title-input:focus{border-bottom-color:var(--line-2)}
+.data-title-input::placeholder{color:var(--ink-4)}
+.data-meta-line{display:flex;align-items:center;gap:6px;flex-wrap:wrap;font-size:10.5px;color:var(--ink-4);margin:5px 0 13px}
+.data-meta-line .sep{width:1px;height:10px;background:var(--line-2)}
+.data-detail .field{gap:5px;margin-bottom:11px}
+.data-detail .field>label{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-4)}
+.data-detail .input,.data-detail .select{padding:9px 11px;font-size:13px;border-radius:10px}
+.data-detail .area{padding:10px 11px;font-size:13.5px;line-height:1.75;border-radius:10px}
+.data-detail .data-body{min-height:150px}
+.data-body-meta{text-align:right;font-size:10px;color:var(--ink-4);margin-top:-6px}
+.data-links-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px}
+.data-links-head .label{margin:0}
+.data-links-head button{border:0;background:transparent;color:var(--ink-3);font-size:11px;padding:2px 0}
+.data-links-head button:hover{color:#fff}
+.data-links{display:flex;flex-wrap:wrap;gap:5px;min-height:22px}
+.data-link{display:inline-flex;align-items:center;gap:5px;padding:4px 6px 4px 9px;border-radius:999px;border:1px solid var(--line);background:var(--fill);color:var(--ink-2);font-size:11px;max-width:100%}
+.data-link:hover{border-color:var(--line-2);color:#fff}
+.data-link span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.data-link .x{width:15px;height:15px;display:grid;place-items:center;border:0;border-radius:50%;background:transparent;color:var(--ink-4);font-size:10px;padding:0}
+.data-link .x:hover{background:rgba(255,255,255,.12);color:#fff}
+.data-link-empty{font-size:11px;color:var(--ink-4);line-height:1.6}
+.data-backlinks{display:flex;flex-direction:column;gap:3px}
+.data-backlink{display:flex;align-items:center;gap:7px;padding:5px 7px;border-radius:8px;border:1px solid transparent;background:transparent;color:var(--ink-3);font-size:11.5px;text-align:left;width:100%}
+.data-backlink:hover{background:var(--fill);border-color:var(--line);color:var(--ink)}
+.data-backlink i{font-style:normal;color:var(--ink-4);font-size:10px}
+.data-related{display:flex;flex-wrap:wrap;gap:5px}
+.data-related button{font-size:10.5px;padding:4px 8px;border-radius:999px;border:1px solid var(--line);background:var(--fill);color:var(--ink-3);max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.data-related button:hover{color:#fff;border-color:var(--line-2)}
+.data-save-state{font-size:10px;color:var(--ink-4);display:flex;align-items:center;gap:5px}
+.data-save-state .dot{width:5px;height:5px}
+.data-save-state.saving .dot{background:var(--warn);box-shadow:0 0 8px rgba(224,192,122,.5)}
+.data-save-state.saved .dot{background:var(--ok);box-shadow:0 0 8px rgba(143,208,164,.4)}
+.data-detail-foot{flex:0 0 auto;display:flex;align-items:center;gap:8px;padding:10px 14px;border-top:1px solid var(--line);background:rgba(8,8,10,.74);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px)}
+.data-detail-foot .btn.primary{flex:1}
+.data-detail-close{display:none}
+#dataScrim{position:fixed;inset:0;z-index:84;background:rgba(0,0,0,.62);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);opacity:0;pointer-events:none;transition:opacity .25s var(--ease)}
+#dataScrim.on{opacity:1;pointer-events:auto}
+
+/* link picker */
+#linkBackdrop{z-index:95}
+.link-results{max-height:min(46vh,360px);overflow:auto;display:flex;flex-direction:column;gap:4px;margin-top:10px}
+.link-row{display:flex;align-items:center;gap:9px;width:100%;padding:8px 9px;border:1px solid transparent;border-radius:10px;background:transparent;text-align:left;color:var(--ink-2)}
+.link-row:hover{background:var(--fill);border-color:var(--line)}
+.link-row.on{background:var(--fill-2);border-color:var(--line-2)}
+.link-row .data-card-icon{width:28px;height:28px;flex:0 0 28px;font-size:12px;border-radius:8px}
+.link-row-main{flex:1;min-width:0}
+.link-row-main b{display:block;font-size:12.5px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.link-row-main small{display:block;font-size:10px;color:var(--ink-4);margin-top:1px}
+.link-check{width:22px;height:22px;flex:0 0 22px;display:grid;place-items:center;border-radius:50%;border:1px solid var(--line-2);color:var(--ink-4);font-size:12px}
+.link-row.on .link-check{background:#efefec;border-color:#fff;color:#0b0b0b}
+
+@media(max-width:1180px){
+  .data-layout{grid-template-columns:188px minmax(0,1fr)}
+  .data-detail{position:fixed;left:0;right:0;bottom:0;top:auto;z-index:85;height:min(88dvh,920px);max-height:88dvh;border-radius:22px 22px 0 0;transform:translateY(105%);transition:transform .34s var(--ease);box-shadow:0 -24px 70px rgba(0,0,0,.6)}
+  .data-detail.open{transform:none}
+  .data-detail::before{content:"";position:absolute;top:8px;left:50%;transform:translateX(-50%);width:38px;height:4px;border-radius:99px;background:rgba(255,255,255,.2);z-index:2}
+  .data-detail-bar{padding-top:18px}
+  .data-detail-scroll{padding-bottom:calc(14px + env(safe-area-inset-bottom,0px))}
+  .data-detail-close{display:grid}
+}
+@media(max-width:760px){
+  .data-layout{grid-template-columns:minmax(0,1fr)}
+  .data-categories{position:static;max-height:none;overflow:visible;padding:11px}
+  .data-cat-list{display:flex;flex-direction:row;gap:5px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px;mask-image:linear-gradient(90deg,#000 calc(100% - 16px),transparent);-webkit-mask-image:linear-gradient(90deg,#000 calc(100% - 16px),transparent)}
+  .data-cat-list::-webkit-scrollbar{display:none}
+  .data-cat{flex:0 0 auto;width:auto;border:1px solid var(--line);background:var(--fill);padding:7px 10px;gap:6px}
+  .data-cat .data-cat-i{width:18px;height:18px;flex:0 0 18px;font-size:9px}
+  .data-cat small{display:none}
+  .data-categories .data-divider{display:block;margin:10px 0}
+  .data-categories .data-divider+.label{display:block}
+  .data-categories .data-side-block{display:none}
+  .data-tagcloud{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}
+  .data-tagcloud::-webkit-scrollbar{display:none}
+  .data-tag-filter{flex:0 0 auto}
+  .data-list,.data-list.layout-cards{grid-template-columns:minmax(0,1fr)}
+  .data-tools{flex-wrap:wrap}
+  .data-tools .search{flex:1 1 100%}
+  .data-tools .select{flex:1 1 auto}
+  .data-seg{flex:0 0 auto}
+}
+@media(max-width:430px){
+  .data-detail{height:92dvh;max-height:92dvh}
+  .data-head-actions .btn{height:36px;padding:0 11px;font-size:12px}
+  .data-title-input{font-size:21px}
+}
+@media(hover:none){
+  .data-card:hover{transform:none}
+  .data-card:active{transform:scale(.99)}
+}
+
 </style>
+</head>
+<body>
 
 <div class="app" id="app">
 <button class="focus-exit" id="focusExit" title="ออกจากโหมดโฟกัส (Esc)">× ออกจากโฟกัส</button>
@@ -480,12 +705,17 @@ body.tlock .view:not([hidden]){animation:none}
   <button class="icon-btn" id="focusTop" title="โหมดโฟกัส" hidden>
     <svg class="icon" viewBox="0 0 24 24"><path d="M8 3H5a2 2 0 0 0-2 2v3M16 3h3a2 2 0 0 1 2 2v3M8 21H5a2 2 0 0 1-2-2v-3M16 21h3a2 2 0 0 0 2-2v-3"/></svg>
   </button>
+  <button class="icon-btn" id="installBtn" title="ติดตั้ง LUMEN เป็นแอป" hidden>
+    <svg class="icon" viewBox="0 0 24 24"><path d="M12 3v11"/><path d="m8 10 4 4 4-4"/><path d="M5 17v2a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-2"/></svg>
+  </button>
   <button class="icon-btn" id="tourBtn" title="บทช่วยสอน">?</button>
   <button class="icon-btn" id="settingsBtn" title="ตั้งค่า">
     <svg class="icon" viewBox="0 0 24 24"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2"/><circle cx="8" cy="17" r="2"/></svg>
   </button>
   <button class="icon-btn" id="moreBtn" title="เพิ่มเติม">•••</button>
 </header>
+
+<div class="offline-bar" id="offlineBar" hidden role="status"><span class="dot"></span><span>ออฟไลน์ — เปิดแอปและแก้ไขงานต่อได้ตามปกติ ข้อมูลจะยังถูกบันทึกในเครื่อง</span></div>
 
 <nav class="subnav" id="subnav" hidden>
   <div class="tabs">
@@ -636,13 +866,64 @@ body.tlock .view:not([hidden]){animation:none}
   <!-- คลังข้อมูลโลกนิยาย -->
   <section class="view" id="v-data" hidden>
     <div class="wrap data-wrap">
-      <div class="page-head"><div><p class="eyebrow">WORLD & STORY ARCHIVE</p><h1 class="page-title">คลังข้อมูลของเรื่อง</h1><p class="page-sub">จัดการตัวละคร โลก สถานที่ ประวัติศาสตร์ องค์กร ระบบพลัง และบันทึกอ้างอิง แยกตามนิยายแต่ละเรื่อง</p></div>
-        <div class="row"><button class="btn" id="dataExport" title="ส่งออกข้อมูลเรื่องนี้เป็นไฟล์ JSON">ส่งออก .json</button><button class="btn" id="dataImportBtn" title="นำเข้าข้อมูลจากไฟล์ JSON">นำเข้า .json</button><input id="dataImportFile" type="file" accept=".json,application/json" hidden><button class="btn primary" id="dataAdd">+ เพิ่มข้อมูล</button></div>
+      <div class="page-head data-head">
+        <div>
+          <p class="eyebrow">WORLD & STORY ARCHIVE</p>
+          <h1 class="page-title">คลังข้อมูลของเรื่อง</h1>
+          <p class="page-sub" id="dataSub">ตัวละคร โลก สถานที่ ประวัติศาสตร์ องค์กร ระบบพลัง และบันทึกอ้างอิง</p>
+        </div>
+        <div class="row data-head-actions">
+          <button class="btn" id="dataExportMd" title="ส่งออกคลังข้อมูลทั้งหมดเป็น Markdown">ส่งออก .md</button>
+          <button class="btn" id="dataExport" title="ส่งออกข้อมูลเรื่องนี้เป็นไฟล์ JSON">ส่งออก .json</button>
+          <button class="btn" id="dataImportBtn" title="นำเข้าข้อมูลจากไฟล์ JSON">นำเข้า .json</button>
+          <input id="dataImportFile" type="file" accept=".json,application/json" hidden>
+          <button class="btn primary" id="dataAdd">+ เพิ่มข้อมูล</button>
+        </div>
       </div>
       <div class="data-layout">
-        <aside class="panel data-categories"><div class="label">หมวดหมู่</div><div id="dataCategories" class="data-cat-list"></div><div class="data-divider"></div><div class="label">เครื่องมือ</div><button class="btn sm" id="dataExportAll">สำรองทุกเรื่อง</button><p class="page-sub">ข้อมูลจัดเก็บในเบราว์เซอร์ของคุณ สามารถส่งออกเป็น JSON เพื่อเก็บสำรองหรือย้ายเครื่อง</p></aside>
-        <section class="data-main"><div class="data-tools"><div class="search" style="flex:1"><span>⌕</span><input id="dataSearch" placeholder="ค้นหาชื่อ เนื้อหา แท็ก…"></div><select class="select" id="dataLayout" style="width:140px"><option value="hybrid">มุมมองผสม</option><option value="cards">แกลเลอรี</option><option value="list">รายการ</option></select></div><div id="dataList" class="data-list"></div></section>
-        <aside class="panel data-detail" id="dataDetail"><div class="data-detail-empty"><div class="data-empty-mark">✧</div><strong>เลือกข้อมูลหรือสร้างรายการใหม่</strong><p class="page-sub">รายละเอียด ความเชื่อมโยง และบันทึกอิสระจะแสดงที่นี่</p></div></aside>
+        <aside class="panel data-categories">
+          <div class="label">หมวดหมู่</div>
+          <div id="dataCategories" class="data-cat-list"></div>
+          <div class="data-divider"></div>
+          <div class="label">แท็ก</div>
+          <div id="dataTags" class="data-tagcloud"></div>
+          <div class="data-divider"></div>
+          <div class="data-side-block">
+            <div class="label">พื้นที่จัดเก็บ</div>
+            <div id="dataStorage" class="data-storage-box"></div>
+          </div>
+        </aside>
+        <section class="data-main">
+          <div class="data-tools">
+            <div class="search"><span>⌕</span><input id="dataSearch" placeholder="ค้นหาชื่อ เนื้อหา แท็ก การเชื่อมโยง…"></div>
+            <select class="select" id="dataSort" aria-label="เรียงลำดับ">
+              <option value="updated">แก้ไขล่าสุด</option>
+              <option value="created">สร้างล่าสุด</option>
+              <option value="title">ชื่อ ก–ฮ</option>
+              <option value="category">ตามหมวดหมู่</option>
+            </select>
+            <div class="data-seg" role="group" aria-label="รูปแบบมุมมอง">
+              <button type="button" data-layout="hybrid" title="มุมมองผสม">▦</button>
+              <button type="button" data-layout="cards" title="แกลเลอรี">▤</button>
+              <button type="button" data-layout="list" title="รายการ">☰</button>
+            </div>
+            <select class="select" id="dataLayout" aria-label="รูปแบบมุมมอง" hidden>
+              <option value="hybrid">มุมมองผสม</option>
+              <option value="cards">แกลเลอรี</option>
+              <option value="list">รายการ</option>
+            </select>
+          </div>
+          <div class="data-filters" id="dataFilters"></div>
+          <div class="data-count" id="dataCount"></div>
+          <div id="dataList" class="data-list"></div>
+        </section>
+        <aside class="panel data-detail" id="dataDetail" aria-label="รายละเอียดข้อมูล">
+          <div class="data-detail-empty">
+            <div class="data-empty-mark">✧</div>
+            <strong>เลือกข้อมูลหรือสร้างรายการใหม่</strong>
+            <p>รายละเอียด การเชื่อมโยง และบันทึกอิสระจะแสดงที่นี่</p>
+          </div>
+        </aside>
       </div>
     </div>
   </section>
@@ -698,9 +979,35 @@ body.tlock .view:not([hidden]){animation:none}
     <div class="srow"><div><strong>ขนาดตัวอักษรในช่องเขียน</strong><span class="d">ใช้กับหน้าเขียนทุกบท</span></div>
       <select class="select" id="setFont" style="width:110px"><option value="16">16 px</option><option value="18">18 px</option><option value="20">20 px</option><option value="22">22 px</option></select></div>
     <div class="srow"><div><strong>บันทึกอัตโนมัติ</strong><span class="d">เก็บลงเบราว์เซอร์นี้ทุกครั้งที่แก้ไข</span></div><input id="setAuto" type="checkbox" checked></div>
+
+    <div class="srow stack" id="pwaRow">
+      <div class="srow-head">
+        <div><strong>ติดตั้งเป็นแอป (PWA)</strong><span class="d" id="pwaHint">ติดตั้งลงหน้าจอโฮม เปิดได้เต็มจอและใช้งานออฟไลน์</span></div>
+        <button class="btn sm" id="pwaInstall" type="button">ติดตั้ง</button>
+      </div>
+      <div class="storage-line"><span id="pwaState">กำลังตรวจสอบ…</span><span class="pwa-badge" id="pwaBadge">PWA</span></div>
+    </div>
+
+    <div class="srow stack">
+      <div class="srow-head">
+        <div><strong>พื้นที่จัดเก็บ</strong><span class="d" id="storageHint">ข้อมูลทั้งหมดอยู่ในเครื่องนี้ ไม่ได้ส่งขึ้นเซิร์ฟเวอร์</span></div>
+      </div>
+      <div class="storage-meter"><i id="storageBar"></i></div>
+      <div class="storage-line"><span id="storageUsed">—</span><span id="storageQuota">—</span></div>
+      <div class="row">
+        <button class="btn sm" id="storagePersist" type="button">ขอพื้นที่ถาวร</button>
+        <button class="btn sm" id="storageBackupNow" type="button">สำรองเดี๋ยวนี้</button>
+      </div>
+    </div>
+
+    <div class="srow stack" style="align-items:stretch">
+      <div><strong>ประวัติสำรองอัตโนมัติ</strong><span class="d">เก็บสำเนาล่าสุดไว้ในเครื่อง สูงสุด 6 ชุด เผื่อข้อมูลหลักเสียหาย</span></div>
+      <div class="backup-list" id="backupList"></div>
+    </div>
+
     <div class="srow" style="align-items:flex-start;flex-direction:column"><div><strong>สำรองข้อมูล</strong><span class="d">ข้อมูลเก็บในเบราว์เซอร์นี้เท่านั้น คัดลอกข้อความสำรองไปเก็บไว้ที่อื่นได้ แล้ววางกลับในช่องเพื่อกู้คืน</span></div>
       <textarea class="area" id="backupBox" rows="4" style="font-family:var(--font-ui);font-size:11px;line-height:1.5" placeholder="ข้อมูลสำรองจะปรากฏที่นี่ หรือวางข้อมูลที่เคยสำรองไว้เพื่อกู้คืน"></textarea>
-      <div class="row"><button class="btn sm" id="backupMake">สร้างและคัดลอกข้อมูลสำรอง</button><button class="btn sm warn" id="backupRestore">กู้คืนจากข้อมูลในช่อง</button></div></div>
+      <div class="row"><button class="btn sm" id="backupMake">สร้างและคัดลอกข้อมูลสำรอง</button><button class="btn sm" id="backupDownload">ดาวน์โหลด .json</button><button class="btn sm warn" id="backupRestore">กู้คืนจากข้อมูลในช่อง</button></div></div>
     <div class="modal-actions"><button class="btn" id="settingsSave">บันทึกตอนนี้</button><button class="btn primary" id="settingsClose">ปิด</button></div>
   </div>
 </div>
@@ -723,7 +1030,19 @@ body.tlock .view:not([hidden]){animation:none}
   </div>
 </div>
 
+<div class="modal-backdrop" id="linkBackdrop">
+  <div class="modal glass" style="width:min(520px,100%)">
+    <h2>เชื่อมโยงรายการ</h2>
+    <p>เลือกข้อมูลในคลังที่จะอ้างอิงถึงรายการนี้ เชื่อมได้ทั้งสองทางและกดเปิดดูได้ทันที</p>
+    <input class="input" id="linkSearch" placeholder="ค้นหาชื่อ หมวด หรือแท็ก…">
+    <div class="link-results" id="linkResults"></div>
+    <div class="modal-actions"><button class="btn primary" id="linkClose">เสร็จสิ้น</button></div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
+<div id="dataScrim"></div>
+<div id="updateBar"><span>มีเวอร์ชันใหม่ของ LUMEN</span><button class="primary" id="updateNow">อัปเดต</button><button id="updateLater">ไว้ก่อน</button></div>
 <div id="tshade"></div><div id="tring" hidden></div>
 <div id="ttext" hidden><div class="trow1"><span class="tstep"><b>01</b><span>/ 18</span></span><span class="tkick"></span></div><h3><span class="th"></span><span class="tcaret"></span></h3><p class="tsub"></p></div>
 <div id="tbar"></div><button id="tskip">ข้าม ×</button><div id="tctrl"><button id="tprev" title="ขั้นก่อนหน้า">‹</button><button id="tpause" title="หยุดชั่วคราว">พัก</button><button id="tnext" title="ขั้นถัดไป">›</button></div>
@@ -765,9 +1084,15 @@ body.tlock .view:not([hidden]){animation:none}
       cover:{style:'glass', hue:210, image:'', mode:'editorial', v:4, glass:75, sample:''}, knowledge:[], chapters:[{id:uid(), title:'', content:'', updatedAt:t}], characters:[],
       createdAt:t, updatedAt:t, lastChapter:null, read:null};
   }
+  const bootState = {missing:true, corrupt:false};
   function load() {
     let lib = null;
-    try { const raw = localStorage.getItem(KEY); if (raw) lib = JSON.parse(raw); } catch(e) { lib = null; }
+    try {
+      const raw = localStorage.getItem(KEY);
+      bootState.missing = !raw;
+      if (raw) lib = JSON.parse(raw);
+      if (raw && !lib) bootState.corrupt = true;
+    } catch(e) { lib = null; bootState.corrupt = true; }
     if (!lib) {
       lib = {novels:[], settings:{fontSize:20, autosave:true}, reader:{theme:'dark', size:19}};
       try {
@@ -785,7 +1110,7 @@ body.tlock .view:not([hidden]){animation:none}
   }
   function normalize(lib) {
     lib.novels = Array.isArray(lib.novels) ? lib.novels : [];
-    lib.settings = Object.assign({fontSize:20, autosave:true, dataLayout:'hybrid'}, lib.settings || {});
+    lib.settings = Object.assign({fontSize:20, autosave:true, dataLayout:'hybrid', dataSort:'updated'}, lib.settings || {});
     lib.reader = Object.assign({theme:'dark', size:19}, lib.reader || {});
     lib.novels.forEach(n => {
       n.id = n.id || uid(); n.title = n.title || 'เรื่องไม่มีชื่อ';
@@ -796,7 +1121,27 @@ body.tlock .view:not([hidden]){animation:none}
       }
       n.cover.mode = n.cover.mode === 'cinematic' ? 'cinematic' : 'editorial';
       n.knowledge = Array.isArray(n.knowledge) ? n.knowledge : [];
-      n.knowledge.forEach(k => { k.id = k.id || uid(); k.category = k.category || 'lore'; k.title = k.title || 'ไม่มีชื่อ'; k.body = k.body || ''; k.summary = k.summary || ''; k.tags = k.tags || ''; k.links = Array.isArray(k.links) ? k.links : []; });
+      const CATS = ['character','world','location','history','organization','system','lore'];
+      n.knowledge.forEach(k => {
+        k.id = k.id || uid();
+        if (CATS.indexOf(k.category) < 0) k.category = 'lore';
+        k.title = k.title || 'ไม่มีชื่อ'; k.body = k.body || ''; k.summary = k.summary || ''; k.tags = k.tags || '';
+        k.links = Array.isArray(k.links) ? k.links : [];
+        k.pinned = !!k.pinned;
+        k.createdAt = +k.createdAt || +k.updatedAt || Date.now();
+        k.updatedAt = +k.updatedAt || +k.createdAt;
+      });
+      // Links used to be free-text titles. Resolve them to stable entry ids once.
+      const byTitle = new Map();
+      n.knowledge.forEach(k => { const t = String(k.title || '').trim(); if (t && !byTitle.has(t)) byTitle.set(t, k.id); });
+      const ids = new Set(n.knowledge.map(k => k.id));
+      n.knowledge.forEach(k => {
+        const seen = new Set();
+        k.links = (k.links || []).map(l => {
+          if (typeof l === 'string') { if (ids.has(l)) return l; return byTitle.get(l.trim()) || null; }
+          return l && l.id ? l.id : null;
+        }).filter(id => id && id !== k.id && !seen.has(id) && seen.add(id));
+      });
       n.chapters = Array.isArray(n.chapters) && n.chapters.length ? n.chapters : [{id:uid(), title:'', content:'', updatedAt:Date.now()}];
       n.chapters.forEach(c => { c.id = c.id || uid(); c.title = c.title || ''; c.content = c.content || ''; });
       n.characters = Array.isArray(n.characters) ? n.characters : [];
@@ -808,6 +1153,7 @@ body.tlock .view:not([hidden]){animation:none}
   let lib = load();
   let view = 'home', nid = null, cid = null, activeChar = -1;
   let dataCategory = 'all', activeDataId = null;
+  let dataTag = null, dataSort = 'updated', dataDetailOpen = false, dataDraftTimer = null, launchHandled = false;
   const N = () => lib.novels.find(n => n.id === nid);
   const C = () => { const n = N(); return n && n.chapters.find(c => c.id === cid); };
 
@@ -816,12 +1162,21 @@ body.tlock .view:not([hidden]){animation:none}
   function openMedia() {
     if (mediaDB) return mediaDB;
     mediaDB = new Promise((res, rej) => {
-      if (!('indexedDB' in window)) return rej(new Error('no indexedDB'));
+      let done = false;
+      const fail = e => { if (done) return; done = true; clearTimeout(timer); mediaDB = null; rej(e); };
+      const ok = db => { if (done) return; done = true; clearTimeout(timer); res(db); };
+      const timer = setTimeout(() => fail(new Error('indexedDB timeout')), 4000);
+      if (!('indexedDB' in window)) return fail(new Error('no indexedDB'));
       let req;
-      try { req = indexedDB.open('lumen-media', 1); } catch(e) { return rej(e); }
-      req.onupgradeneeded = () => { const db = req.result; if (!db.objectStoreNames.contains('covers')) db.createObjectStore('covers'); };
-      req.onsuccess = () => res(req.result);
-      req.onerror = () => rej(req.error || new Error('indexedDB'));
+      try { req = indexedDB.open('lumen-media', 2); } catch(e) { return fail(e); }
+      req.onupgradeneeded = () => {
+        const db = req.result;
+        if (!db.objectStoreNames.contains('covers')) db.createObjectStore('covers');
+        if (!db.objectStoreNames.contains('snapshots')) db.createObjectStore('snapshots');
+      };
+      req.onsuccess = () => ok(req.result);
+      req.onerror = () => fail(req.error || new Error('indexedDB'));
+      req.onblocked = () => fail(new Error('indexedDB blocked'));
     });
     return mediaDB;
   }
@@ -838,6 +1193,55 @@ body.tlock .view:not([hidden]){animation:none}
   const mediaPut = (k, v) => mediaOp('readwrite', s => s.put(v, k));
   const mediaGet = k => mediaOp('readonly', s => s.get(k));
   const mediaDel = k => mediaOp('readwrite', s => s.delete(k));
+
+  /* Rolling IndexedDB snapshots: a safety net when localStorage is cleared or corrupted. */
+  const SNAP_LIMIT = 6;
+  function snapOp(mode, fn) {
+    return openMedia().then(db => new Promise((res, rej) => {
+      let t;
+      try { t = db.transaction('snapshots', mode); } catch(e) { return rej(e); }
+      let req; try { req = fn(t.objectStore('snapshots')); } catch(e) { return rej(e); }
+      t.oncomplete = () => res(req ? req.result : undefined);
+      t.onerror = () => rej(t.error || new Error('indexedDB'));
+      t.onabort = () => rej(t.error || new Error('indexedDB'));
+    }));
+  }
+  async function listSnapshots() {
+    try {
+      const all = await snapOp('readonly', s => s.getAll());
+      return (all || []).map(x => ({at: x.at, size: x.size})).sort((a, b) => b.at - a.at);
+    } catch(e) { return []; }
+  }
+  async function readSnapshot(at) {
+    const x = await snapOp('readonly', s => s.get(+at));
+    return x && x.data ? x.data : null;
+  }
+  async function writeSnapshot(json) {
+    if (!json || json.length > 6 * 1024 * 1024) return;
+    const at = Date.now();
+    await snapOp('readwrite', s => s.put({at, size: json.length, data: json}, at));
+    const keys = (await snapOp('readonly', s => s.getAllKeys())) || [];
+    const old = keys.map(Number).sort((a, b) => b - a).slice(SNAP_LIMIT);
+    for (const key of old) { try { await snapOp('readwrite', s => s.delete(key)); } catch(e) {} }
+  }
+  let lastSnapAt = 0, snapTimer = null;
+  function queueSnapshot(json) {
+    if (Date.now() - lastSnapAt < 60000) return;
+    lastSnapAt = Date.now();
+    clearTimeout(snapTimer);
+    snapTimer = setTimeout(() => {
+      // A manual backup may have run while this was queued.
+      if (Date.now() - lastSnapAt < 55000) return;
+      lastSnapAt = Date.now();
+      writeSnapshot(json).catch(() => {});
+    }, 1800);
+  }
+  async function snapshotNow() {
+    const json = serializeLibrary();
+    if (!json) return false;
+    try { await writeSnapshot(json); lastSnapAt = Date.now(); return true; }
+    catch(e) { return false; }
+  }
   async function hydrateCovers() {
     const need = lib.novels.filter(n => n.cover && n.cover.store === 'idb' && !n.cover.image);
     if (!need.length) return;
@@ -857,31 +1261,34 @@ body.tlock .view:not([hidden]){animation:none}
     saveText.textContent = SAVE_LABEL[s] || SAVE_LABEL.saved;
     savePill.title = s === 'dirty' ? 'มีการแก้ไขที่ยังไม่บันทึก — แตะเพื่อบันทึก' : 'บันทึกตอนนี้';
   }
-  function persist() {
-    const stripped = [];
+  function serializeLibrary(dropLarge) {
+    const changed = [];
     // Images stored in IndexedDB are kept out of localStorage (5 MB quota) but stay visible in memory.
     lib.novels.forEach(n => {
       const cv = n.cover;
-      if (cv && cv.store === 'idb' && typeof cv.image === 'string' && cv.image.startsWith('data:image/')) {
-        stripped.push([cv, cv.image]); cv.image = '';
+      if (cv && typeof cv.image === 'string' && cv.image.startsWith('data:image/') &&
+          (cv.store === 'idb' || (dropLarge && cv.image.length > 120000))) {
+        changed.push([cv, cv.image]); cv.image = '';
       }
     });
+    try { return JSON.stringify(lib); }
+    finally { changed.forEach(([cv, im]) => { if (!cv.image) cv.image = im; }); }
+  }
+  function persist() {
+    const text = serializeLibrary(false);
     try {
-      localStorage.setItem(KEY, JSON.stringify(lib)); setSaveState('saved'); return true;
+      localStorage.setItem(KEY, text); setSaveState('saved'); queueSnapshot(text); return true;
     } catch(e) {
       // Never lose the manuscript because of a photo: retry with oversized inline covers removed.
-      const dropped = [];
-      lib.novels.forEach(n => { const cv = n.cover; if (cv && cv.image && cv.image.length > 120000) { dropped.push([cv, cv.image]); cv.image = ''; } });
-      if (dropped.length) {
+      const slim = serializeLibrary(true);
+      if (slim !== text) {
         try {
-          localStorage.setItem(KEY, JSON.stringify(lib)); setSaveState('saved');
+          localStorage.setItem(KEY, slim); setSaveState('saved'); queueSnapshot(slim);
           toast('บันทึกเนื้อหาแล้ว แต่ภาพปกใหญ่เกินพื้นที่จัดเก็บ');
           return true;
-        } catch(e2) { dropped.forEach(([cv, im]) => { if (!cv.image) cv.image = im; }); }
+        } catch(e2) {}
       }
-      setSaveState('error'); toast('บันทึกไม่ได้ พื้นที่เก็บข้อมูลอาจเต็มหรือถูกปิดไว้'); return false;
-    } finally {
-      stripped.forEach(([cv, im]) => { if (!cv.image) cv.image = im; });
+      setSaveState('error'); toast('บันทึกไม่ได้ พื้นที่จัดเก็บอาจเต็มหรือถูกปิดไว้'); return false;
     }
   }
   function schedulePersist() {
@@ -890,7 +1297,7 @@ body.tlock .view:not([hidden]){animation:none}
   }
   savePill.onclick = () => { try { commitEditor(); } catch(e) {} if (persist()) toast('บันทึกแล้ว'); };
   setSaveState('saved');
-  const flushNow = () => { clearTimeout(pt); persist(); };
+  const flushNow = () => { clearTimeout(pt); try { if (view === 'data') commitDataDraft(true); } catch(e) {} persist(); };
   window.addEventListener('beforeunload', flushNow);
   document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') flushNow(); });
 
@@ -972,6 +1379,7 @@ body.tlock .view:not([hidden]){animation:none}
   const VIEWS = ['home','cover','story','chapters','write','read','data'];
   function go(v, o = {}) {
     if (view === 'write') commitEditor();
+    if (view === 'data') { try { commitDataDraft(true); } catch(e) {} try { setDataDetailOpen(false); } catch(e) {} }
     if (o.novel !== undefined && o.novel !== nid) { nid = o.novel; activeChar = -1; }
     if (v !== 'home' && !N()) { v = 'home'; nid = null; }
     if (o.chapter) cid = o.chapter;
@@ -1090,9 +1498,11 @@ body.tlock .view:not([hidden]){animation:none}
     go(b.dataset.a, {novel:id});
   });
   $('#resume').addEventListener('click', e => { const b = e.target.closest('#resumeBtn'); if (b) go('write', {novel:b.dataset.id}); });
-  function newNovel() {
+  function newNovel(then) {
     askText('เริ่มเรื่องใหม่', 'ตั้งชื่อเรื่อง เปลี่ยนทีหลังได้', '', v => {
-      const n = blankNovel((v || '').trim()); lib.novels.push(n); persist(); go('cover', {novel:n.id}); toast('สร้างเรื่องแล้ว');
+      const n = blankNovel((v || '').trim()); lib.novels.push(n); persist();
+      const dest = typeof then === 'string' && ['cover','story','chapters','write','read','data'].includes(then) ? then : 'cover';
+      go(dest, {novel:n.id}); toast('สร้างเรื่องแล้ว');
     }, 'สร้างเรื่อง');
   }
   $('#newNovel').onclick = newNovel;
@@ -1460,50 +1870,488 @@ body.tlock .view:not([hidden]){animation:none}
 
   /* ---------- per-novel knowledge archive ---------- */
   const DATA_CATS = [
-    {id:'all',label:'ทุกหมวด',icon:'◈'}, {id:'character',label:'ตัวละคร',icon:'♙'},
-    {id:'world',label:'โลก / กฎของโลก',icon:'◎'}, {id:'location',label:'สถานที่',icon:'▣'},
-    {id:'history',label:'ประวัติศาสตร์ / ไทม์ไลน์',icon:'◷'}, {id:'organization',label:'องค์กร / กลุ่ม',icon:'♧'},
-    {id:'system',label:'ระบบพลัง / เวทมนตร์',icon:'✧'}, {id:'lore',label:'ตำนาน / ข้อมูลอื่น ๆ',icon:'▤'}
+    {id:'all', label:'ทุกหมวด', icon:'◈', color:'#f0f0ed'},
+    {id:'pinned', label:'ปักหมุด', icon:'★', color:'#e0c07a'},
+    {id:'character', label:'ตัวละคร', icon:'♙', color:'#9ab8ff'},
+    {id:'world', label:'โลก / กฎของโลก', icon:'◎', color:'#8fd0a4'},
+    {id:'location', label:'สถานที่', icon:'▣', color:'#e0c07a'},
+    {id:'history', label:'ประวัติศาสตร์ / ไทม์ไลน์', icon:'◷', color:'#c9a8ff'},
+    {id:'organization', label:'องค์กร / กลุ่ม', icon:'♧', color:'#ffb3a7'},
+    {id:'system', label:'ระบบพลัง / เวทมนตร์', icon:'✧', color:'#8ad8e8'},
+    {id:'lore', label:'ตำนาน / ข้อมูลอื่น ๆ', icon:'▤', color:'#c7c7c0'}
   ];
-  const dataIcon = id => (DATA_CATS.find(x => x.id === id) || DATA_CATS[7]).icon;
-  const dataLabel = id => (DATA_CATS.find(x => x.id === id) || DATA_CATS[7]).label;
-  const knowledge = () => { const n=N(); if (!n) return []; n.knowledge = Array.isArray(n.knowledge) ? n.knowledge : []; return n.knowledge; };
+  const DATA_EDIT_CATS = DATA_CATS.filter(c => c.id !== 'all' && c.id !== 'pinned');
+  const catMeta = id => DATA_CATS.find(x => x.id === id) || DATA_CATS[DATA_CATS.length - 1];
+  const dataIcon = id => catMeta(id).icon;
+  const dataLabel = id => catMeta(id).label;
+  const dataColor = id => catMeta(id).color;
+  const knowledge = () => { const n = N(); if (!n) return []; n.knowledge = Array.isArray(n.knowledge) ? n.knowledge : []; return n.knowledge; };
+  const entryById = id => knowledge().find(x => x.id === id);
+  const tagList = s => String(s || '').split(',').map(t => t.trim()).filter(Boolean);
+  const entryLinks = k => (Array.isArray(k.links) ? k.links : []).map(id => entryById(typeof id === 'string' ? id : (id && id.id))).filter(Boolean);
+  const backlinksFor = id => knowledge().filter(e => (e.links || []).indexOf(id) >= 0);
+  const relatedFor = k => {
+    const mine = new Set(tagList(k.tags).map(t => t.toLowerCase()));
+    if (!mine.size) return [];
+    return knowledge().filter(e => e.id !== k.id && tagList(e.tags).some(t => mine.has(t.toLowerCase()))).slice(0, 6);
+  };
+  const fmtBytes = n => n < 1024 ? Math.round(n) + ' B' : n < 1024 * 1024 ? (n / 1024).toFixed(1) + ' KB' : (n / 1024 / 1024).toFixed(2) + ' MB';
+  const safeFile = s => String(s || 'lumen').replace(/[\\/:*?"<>|]+/g, '_').slice(0, 80);
+
+  function dataHighlight(text, q) {
+    const safe = esc(text == null ? '' : text);
+    if (!q) return safe;
+    const needle = esc(q).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    try { return safe.replace(new RegExp('(' + needle + ')', 'gi'), '<mark>$1</mark>'); }
+    catch(e) { return safe; }
+  }
+
+  function setDataDetailOpen(open) {
+    dataDetailOpen = !!open;
+    const box = $('#dataDetail'), scrim = $('#dataScrim');
+    if (box) box.classList.toggle('open', dataDetailOpen);
+    if (scrim) scrim.classList.toggle('on', dataDetailOpen);
+  }
+
+  function setDataSaveState(state) {
+    const el = $('#dataSaveState');
+    if (!el) return;
+    el.className = 'data-save-state ' + state;
+    el.innerHTML = '<span class="dot"></span>' + (state === 'saving' ? 'กำลังบันทึก…' : 'บันทึกอัตโนมัติ');
+  }
+
   function renderData() {
-    const n=N(); if (!n) return;
-    if (!knowledge().some(x => x.id === activeDataId)) activeDataId = null;
+    const n = N(); if (!n) return;
+    if (activeDataId && !entryById(activeDataId)) activeDataId = null;
+    const total = knowledge().length;
+    const links = knowledge().reduce((a, k) => a + entryLinks(k).length, 0);
+    $('#dataSub').textContent = `${total} รายการ · ${links} การเชื่อมโยง · ${n.title}`;
+    dataSort = lib.settings.dataSort || 'updated';
+    const sortEl = $('#dataSort'); if (sortEl) sortEl.value = dataSort;
+    if (dataTag && !knowledge().some(k => tagList(k.tags).indexOf(dataTag) >= 0)) dataTag = null;
     $('#dataLayout').value = lib.settings.dataLayout || 'hybrid';
-    $('#dataCategories').innerHTML = DATA_CATS.map(c => `<button class="data-cat${dataCategory===c.id?' on':''}" data-dcat="${c.id}"><span>${c.icon} &nbsp;${c.label}</span><small>${c.id==='all'?knowledge().length:knowledge().filter(x=>x.category===c.id).length}</small></button>`).join('');
-    renderDataList(); renderDataDetail();
+    renderDataCats();
+    renderDataTags();
+    renderDataList();
+    renderDataDetail();
+    renderDataStorage();
   }
+
+  function renderDataCats() {
+    const box = $('#dataCategories'); if (!box) return;
+    const all = knowledge();
+    box.innerHTML = DATA_CATS.map(c => {
+      const count = c.id === 'all' ? all.length : c.id === 'pinned' ? all.filter(k => k.pinned).length : all.filter(k => k.category === c.id).length;
+      const meta = catMeta(c.id);
+      return `<button type="button" class="data-cat${dataCategory === c.id ? ' on' : ''}" data-dcat="${c.id}">` +
+        `<span class="data-cat-i" style="--c:${meta.color}">${meta.icon}</span>` +
+        `<span class="data-cat-t">${meta.label}</span><small>${count}</small></button>`;
+    }).join('');
+  }
+
+  function renderDataTags() {
+    const box = $('#dataTags'); if (!box) return;
+    const counts = new Map();
+    knowledge().forEach(k => tagList(k.tags).forEach(t => counts.set(t, (counts.get(t) || 0) + 1)));
+    if (!counts.size) { box.innerHTML = '<span class="data-tag-empty">ยังไม่มีแท็ก — ใส่แท็กในรายละเอียดเพื่อจัดกลุ่มและกรอง</span>'; return; }
+    const tags = [...counts.entries()].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0], 'th')).slice(0, 22);
+    box.innerHTML = tags.map(([t, n]) => `<button type="button" class="data-tag-filter${dataTag === t ? ' on' : ''}" data-dtag="${esc(t)}"><span>#${esc(t)}</span><small>${n}</small></button>`).join('');
+  }
+
+  const DATA_SORTS = {
+    updated: (a, b) => (b.updatedAt || 0) - (a.updatedAt || 0),
+    created: (a, b) => (b.createdAt || 0) - (a.createdAt || 0),
+    title: (a, b) => String(a.title || '').localeCompare(String(b.title || ''), 'th'),
+    category: (a, b) => dataLabel(a.category).localeCompare(dataLabel(b.category), 'th') || String(a.title || '').localeCompare(String(b.title || ''), 'th')
+  };
+
   function filteredKnowledge() {
-    const q=($('#dataSearch').value||'').trim().toLowerCase();
-    return knowledge().filter(k => (dataCategory==='all'||k.category===dataCategory) && (!q || [k.title,k.summary,k.body,k.tags].join(' ').toLowerCase().includes(q)));
+    const q = ($('#dataSearch').value || '').trim().toLowerCase();
+    const arr = knowledge().filter(k => {
+      if (dataCategory === 'pinned' && !k.pinned) return false;
+      if (dataCategory !== 'all' && dataCategory !== 'pinned' && k.category !== dataCategory) return false;
+      if (dataTag && tagList(k.tags).indexOf(dataTag) < 0) return false;
+      if (q) {
+        const hay = [k.title, k.summary, k.body, k.tags, ...entryLinks(k).map(e => e.title)].join(' ').toLowerCase();
+        if (!hay.includes(q)) return false;
+      }
+      return true;
+    });
+    const sorter = DATA_SORTS[dataSort] || DATA_SORTS.updated;
+    return arr.sort((a, b) => (b.pinned ? 1 : 0) - (a.pinned ? 1 : 0) || sorter(a, b));
   }
+
+  function dataHasFilter() {
+    return dataCategory !== 'all' || !!dataTag || !!($('#dataSearch').value || '').trim();
+  }
+
   function renderDataList() {
-    const list=$('#dataList'), layout=$('#dataLayout').value; list.classList.toggle('layout-list',layout==='list'); list.classList.toggle('layout-cards',layout==='cards'); list.innerHTML='';
-    const arr=filteredKnowledge();
-    if (!arr.length) { list.innerHTML=`<div class="data-empty">ยังไม่มีข้อมูลในหมวดนี้<br>กด <b>+ เพิ่มข้อมูล</b> เพื่อสร้างรายการ หรือเปลี่ยนหมวดหมู่</div>`; return; }
-    arr.forEach(k=>{ const b=document.createElement('button'); b.className='data-card'+(k.id===activeDataId?' active':''); b.innerHTML=`<div class="data-card-top"><div class="data-card-icon">${dataIcon(k.category)}</div><div style="min-width:0"><h3>${esc(k.title)}</h3><div class="page-sub">${esc(dataLabel(k.category))}</div></div></div><p>${esc(k.summary || k.body || 'ยังไม่มีคำอธิบาย')}</p><div class="data-tags">${String(k.tags||'').split(',').map(t=>t.trim()).filter(Boolean).slice(0,4).map(t=>`<span class="data-tag">${esc(t)}</span>`).join('')}</div>`; b.onclick=()=>{activeDataId=k.id;renderDataList();renderDataDetail();}; list.appendChild(b); });
+    const list = $('#dataList'); if (!list) return;
+    const layout = lib.settings.dataLayout || 'hybrid';
+    list.className = 'data-list' + (layout === 'list' ? ' layout-list' : layout === 'cards' ? ' layout-cards' : '');
+    $('#dataLayout').value = layout;
+    document.querySelectorAll('.data-seg [data-layout]').forEach(b => b.classList.toggle('on', b.dataset.layout === layout));
+    const q = ($('#dataSearch').value || '').trim().toLowerCase();
+    const arr = filteredKnowledge();
+    const total = knowledge().length;
+    const filtered = dataHasFilter();
+    $('#dataCount').innerHTML = (filtered ? `<span>แสดง <b>${arr.length}</b> จาก ${total} รายการ</span>` : `<span><b>${total}</b> รายการ</span>`) +
+      (filtered ? '<button type="button" data-clear-all>ล้างตัวกรอง</button>' : '');
+    const chips = [];
+    if (dataCategory !== 'all') chips.push(`<span class="data-filter-chip">${dataIcon(dataCategory)} ${esc(dataLabel(dataCategory))}<button type="button" data-clear="category" aria-label="ล้างหมวดหมู่">×</button></span>`);
+    if (dataTag) chips.push(`<span class="data-filter-chip">#${esc(dataTag)}<button type="button" data-clear="tag" aria-label="ล้างแท็ก">×</button></span>`);
+    if (q) chips.push(`<span class="data-filter-chip">ค้นหา “${esc(q)}”<button type="button" data-clear="search" aria-label="ล้างคำค้น">×</button></span>`);
+    $('#dataFilters').innerHTML = chips.join('');
+    if (!arr.length) {
+      list.innerHTML = total
+        ? `<div class="data-empty">ไม่พบข้อมูลที่ตรงกับตัวกรอง<br><button class="btn sm" type="button" data-clear-all>ล้างตัวกรองทั้งหมด</button></div>`
+        : `<div class="data-empty"><b>คลังข้อมูลยังว่าง</b><br>เริ่มจากสิ่งที่เรื่องนี้ต้องใช้บ่อย<br><div class="row">${DATA_EDIT_CATS.slice(0, 4).map(c => `<button class="btn sm" type="button" data-newcat="${c.id}">${c.icon} ${c.label.split(' / ')[0]}</button>`).join('')}</div></div>`;
+      return;
+    }
+    list.innerHTML = arr.map(k => {
+      const summary = String(k.summary || k.body || 'ยังไม่มีคำอธิบาย').replace(/\s+/g, ' ').slice(0, 240);
+      const tags = tagList(k.tags).slice(0, 4);
+      const links = entryLinks(k).length;
+      return `<button type="button" class="data-card${k.id === activeDataId ? ' active' : ''}" data-id="${k.id}" aria-pressed="${k.id === activeDataId}">` +
+        `<div class="data-card-top"><div class="data-card-icon" style="--c:${dataColor(k.category)}">${dataIcon(k.category)}</div>` +
+        `<div class="data-card-main"><h3>${dataHighlight(k.title, q)}</h3><div class="data-card-meta">` +
+        (k.pinned ? '<span class="pin">★ ปักหมุด</span><span>·</span>' : '') +
+        `<span>${esc(dataLabel(k.category))}</span><span>·</span><span>แก้ไข ${fmtDate(k.updatedAt)}</span></div></div>` +
+        `<span class="data-card-linkcount" title="การเชื่อมโยง">↗ ${links}</span></div>` +
+        `<p>${dataHighlight(summary, q)}</p>` +
+        (tags.length ? `<div class="data-tags">${tags.map(t => `<span class="data-tag">#${esc(t)}</span>`).join('')}</div>` : '') +
+        `</button>`;
+    }).join('');
   }
+
+  function dataMetaLine(k) {
+    const links = entryLinks(k).length;
+    return `<span>สร้าง ${fmtDate(k.createdAt)}</span><span class="sep"></span><span>แก้ไข ${fmtDate(k.updatedAt)}</span>` +
+      `<span class="sep"></span><span>${countWords(k.body).toLocaleString()} คำ</span>` +
+      (links ? `<span class="sep"></span><span>↗ ${links} การเชื่อมโยง</span>` : '');
+  }
+
   function renderDataDetail() {
-    const box=$('#dataDetail'), k=knowledge().find(x=>x.id===activeDataId);
-    if (!k) { box.innerHTML='<div class="data-detail-empty"><div class="data-empty-mark">✧</div><strong>เลือกข้อมูลหรือสร้างรายการใหม่</strong><p class="page-sub">รายละเอียด ความเชื่อมโยง และบันทึกอิสระจะแสดงที่นี่</p></div>'; return; }
-    box.innerHTML=`<div class="data-detail-form"><div class="data-detail-head"><div><p class="eyebrow">${esc(dataLabel(k.category))}</p><h2>รายละเอียดข้อมูล</h2></div><button class="icon-btn" id="dataDelete" title="ลบรายการ">×</button></div>
-      <div class="field"><label for="dkTitle">ชื่อรายการ</label><input class="input" id="dkTitle" value="${esc(k.title)}" placeholder="ชื่อข้อมูล"></div>
-      <div class="field"><label for="dkCategory">หมวดหมู่</label><select class="select" id="dkCategory">${DATA_CATS.filter(x=>x.id!=='all').map(x=>`<option value="${x.id}" ${k.category===x.id?'selected':''}>${x.label}</option>`).join('')}</select></div>
-      <div class="field"><label for="dkSummary">สรุปสั้น</label><textarea class="area" id="dkSummary" rows="3" placeholder="ใจความสำคัญสำหรับค้นหาและอ้างอิง"></textarea></div>
-      <div class="field"><label for="dkBody">รายละเอียด / บันทึกอิสระ</label><textarea class="area data-body" id="dkBody" rows="9" placeholder="เขียนรายละเอียดได้เต็มที่ ไม่จำกัดรูปแบบ"></textarea></div>
-      <div class="field"><label for="dkTags">แท็ก (คั่นด้วยจุลภาค)</label><input class="input" id="dkTags" placeholder="เช่น ราชวงศ์, สงคราม, ตัวเอก"></div>
-      <div class="field"><label for="dkLinks">เชื่อมโยงกับรายการอื่น (ชื่อรายการ คั่นด้วยจุลภาค)</label><input class="input" id="dkLinks" placeholder="เช่น ราชอาณาจักรเหนือ, สงครามครั้งที่หนึ่ง"><p class="page-sub">การเชื่อมโยงเป็นข้อความอ้างอิงที่แก้ไขเองได้</p></div>
-      <div class="data-detail-actions"><button class="btn primary" id="dataSave">บันทึกรายการ</button><button class="btn" id="dataDuplicate">ทำสำเนา</button></div></div>`;
-    $('#dkSummary').value=k.summary||''; $('#dkBody').value=k.body||''; $('#dkTags').value=k.tags||''; $('#dkLinks').value=(k.links||[]).join(', ');
-    $('#dataSave').onclick=()=>{ k.title=$('#dkTitle').value.trim()||'ไม่มีชื่อ'; k.category=$('#dkCategory').value; k.summary=$('#dkSummary').value; k.body=$('#dkBody').value; k.tags=$('#dkTags').value; k.links=$('#dkLinks').value.split(',').map(x=>x.trim()).filter(Boolean); touchNovel(); renderData(); toast('บันทึกข้อมูลแล้ว'); };
-    $('#dataDelete').onclick=()=>askYes('ลบข้อมูลรายการนี้?',`ลบ “${k.title}” ออกจากคลังข้อมูลของเรื่องนี้`,()=>{const i=knowledge().findIndex(x=>x.id===k.id);if(i>=0)knowledge().splice(i,1);activeDataId=null;touchNovel();renderData();toast('ลบข้อมูลแล้ว');},'ลบ');
-    $('#dataDuplicate').onclick=()=>{const copy=JSON.parse(JSON.stringify(k));copy.id=uid();copy.title += ' - สำเนา';knowledge().push(copy);activeDataId=copy.id;touchNovel();renderData();toast('ทำสำเนาแล้ว');};
+    const box = $('#dataDetail'); if (!box) return;
+    const k = entryById(activeDataId);
+    if (!k) {
+      box.classList.remove('open');
+      box.innerHTML = `<div class="data-detail-empty"><div class="data-empty-mark">✧</div><strong>เลือกข้อมูลหรือสร้างรายการใหม่</strong>` +
+        `<p>เลือกการ์ดทางซ้าย หรือเริ่มจากหมวดที่ใช้บ่อย</p><div class="data-empty-cats">` +
+        DATA_EDIT_CATS.slice(0, 4).map(c => `<button type="button" data-newcat="${c.id}">${c.icon} ${c.label.split(' / ')[0]}</button>`).join('') +
+        `</div></div>`;
+      return;
+    }
+    const meta = catMeta(k.category);
+    box.innerHTML = `<div class="data-detail-bar">` +
+      `<div class="data-detail-kicker" id="dkKicker" style="--c:${meta.color}"><span class="i">${meta.icon}</span><span id="dkKickerText">${meta.label}</span></div>` +
+      `<div class="data-detail-tools">` +
+      `<button type="button" class="icon-btn${k.pinned ? ' on' : ''}" id="dataPin" title="${k.pinned ? 'เลิกปักหมุด' : 'ปักหมุด'}">★</button>` +
+      `<button type="button" class="icon-btn" id="dataDuplicate" title="ทำสำเนา">⧉</button>` +
+      `<button type="button" class="icon-btn" id="dataExportEntry" title="ส่งออกเป็น Markdown">⇩</button>` +
+      `<button type="button" class="icon-btn" id="dataDelete" title="ลบรายการ">×</button>` +
+      `<button type="button" class="icon-btn data-detail-close" id="dataDetailClose" title="ปิด">✕</button>` +
+      `</div></div>` +
+      `<div class="data-detail-scroll" id="dataDetailScroll">` +
+      `<input class="data-title-input" id="dkTitle" value="${esc(k.title)}" placeholder="ชื่อข้อมูล" aria-label="ชื่อรายการ">` +
+      `<div class="data-meta-line" id="dkMeta">${dataMetaLine(k)}</div>` +
+      `<div class="field"><label for="dkCategory">หมวดหมู่</label><select class="select" id="dkCategory">${DATA_EDIT_CATS.map(c => `<option value="${c.id}"${k.category === c.id ? ' selected' : ''}>${c.label}</option>`).join('')}</select></div>` +
+      `<div class="field"><label for="dkSummary">สรุปสั้น</label><textarea class="area" id="dkSummary" rows="3" placeholder="ใจความสำคัญสำหรับค้นหาและอ้างอิง"></textarea></div>` +
+      `<div class="field"><label for="dkBody">รายละเอียด / บันทึกอิสระ</label><textarea class="area data-body" id="dkBody" rows="8" placeholder="เขียนรายละเอียดได้เต็มที่ ไม่จำกัดรูปแบบ"></textarea><div class="data-body-meta" id="dkBodyMeta"></div></div>` +
+      `<div class="field"><label for="dkTags">แท็ก (คั่นด้วยจุลภาค)</label><input class="input" id="dkTags" placeholder="เช่น ราชวงศ์, สงคราม, ตัวเอก"><div class="data-tags" id="dkTagPreview"></div></div>` +
+      `<div class="field"><div class="data-links-head"><span class="label">เชื่อมโยงกับรายการอื่น</span><button type="button" id="dkAddLink">+ เชื่อมโยง</button></div><div class="data-links" id="dkLinks"></div></div>` +
+      `<div class="field"><span class="label">ถูกอ้างถึงโดย</span><div class="data-backlinks" id="dkBacklinks"></div></div>` +
+      `<div class="field"><span class="label">เกี่ยวข้องจากแท็ก</span><div class="data-related" id="dkRelated"></div></div>` +
+      `</div>` +
+      `<div class="data-detail-foot"><span class="data-save-state saved" id="dataSaveState"><span class="dot"></span>บันทึกอัตโนมัติ</span><span style="flex:1"></span><button type="button" class="btn sm primary" id="dataSave">บันทึก</button></div>`;
+
+    $('#dkSummary').value = k.summary || '';
+    $('#dkBody').value = k.body || '';
+    $('#dkTags').value = k.tags || '';
+    updateDataBodyMeta();
+    updateDataTagPreview();
+    renderDetailLinks(k);
+
+    $('#dkTitle').addEventListener('input', () => { scheduleDataCommit(); updateDataCardPreview(); });
+    $('#dkSummary').addEventListener('input', scheduleDataCommit);
+    $('#dkBody').addEventListener('input', () => { updateDataBodyMeta(); scheduleDataCommit(); });
+    $('#dkTags').addEventListener('input', () => { updateDataTagPreview(); scheduleDataCommit(); });
+    $('#dkCategory').addEventListener('change', e => {
+      const c = catMeta(e.target.value);
+      const kicker = $('#dkKicker'); if (kicker) { kicker.style.setProperty('--c', c.color); }
+      $('#dkKickerText').textContent = c.label;
+      scheduleDataCommit();
+    });
+    $('#dataPin').onclick = () => {
+      commitDataDraft(true);
+      k.pinned = !k.pinned; k.updatedAt = Date.now(); touchNovel(); renderData();
+      toast(k.pinned ? 'ปักหมุดรายการแล้ว' : 'เลิกปักหมุดแล้ว');
+    };
+    $('#dataDuplicate').onclick = () => duplicateDataEntry(k);
+    $('#dataExportEntry').onclick = () => exportEntryMarkdown(k);
+    $('#dataDelete').onclick = () => deleteDataEntry(k);
+    $('#dataSave').onclick = () => commitDataDraft(false);
+    $('#dataDetailClose').onclick = () => setDataDetailOpen(false);
+    $('#dkAddLink').onclick = openLinkPicker;
   }
-  $('#dataCategories').addEventListener('click',e=>{const b=e.target.closest('[data-dcat]');if(!b)return;dataCategory=b.dataset.dcat;renderData();});
-  $('#dataSearch').addEventListener('input',renderDataList); $('#dataLayout').addEventListener('change',e=>{lib.settings.dataLayout=e.target.value;persist();renderDataList();});
-  $('#dataAdd').onclick=()=>{const k={id:uid(),category:dataCategory==='all'?'lore':dataCategory,title:'ข้อมูลใหม่',summary:'',body:'',tags:'',links:[],createdAt:Date.now(),updatedAt:Date.now()};knowledge().push(k);activeDataId=k.id;touchNovel();renderData();$('#dkTitle').focus();$('#dkTitle').select();};
+
+  function updateDataBodyMeta() {
+    const el = $('#dkBodyMeta'); if (!el) return;
+    const value = ($('#dkBody') && $('#dkBody').value) || '';
+    el.textContent = `${countWords(value).toLocaleString()} คำ · ${value.length.toLocaleString()} ตัวอักษร`;
+  }
+
+  function updateDataTagPreview() {
+    const box = $('#dkTagPreview'); if (!box) return;
+    const tags = tagList(($('#dkTags') && $('#dkTags').value) || '');
+    box.innerHTML = tags.map(t => `<span class="data-tag">#${esc(t)}</span>`).join('');
+  }
+
+  function updateDataCardPreview() {
+    const k = entryById(activeDataId); if (!k) return;
+    const title = $('#dkTitle');
+    if (!title) return;
+    k.title = title.value.trim() || 'ไม่มีชื่อ';
+  }
+
+  function renderDetailLinks(k) {
+    if (!k || k.id !== activeDataId) return;
+    const links = entryLinks(k);
+    const linksBox = $('#dkLinks');
+    if (linksBox) {
+      linksBox.innerHTML = links.length
+        ? links.map(e => `<span class="data-link" data-open="${e.id}" role="button" tabindex="0" title="เปิด ${esc(e.title)}"><span>${dataIcon(e.category)} ${esc(e.title)}</span><button type="button" class="x" data-unlink="${e.id}" aria-label="เลิกเชื่อมโยง">×</button></span>`).join('')
+        : '<span class="data-link-empty">ยังไม่มีการเชื่อมโยง — กด “+ เชื่อมโยง” เพื่อเลือกจากคลัง</span>';
+    }
+    const backBox = $('#dkBacklinks');
+    if (backBox) {
+      const back = backlinksFor(k.id);
+      backBox.innerHTML = back.length
+        ? back.map(e => `<button type="button" class="data-backlink" data-open="${e.id}"><i>${dataIcon(e.category)}</i><span>${esc(e.title)}</span></button>`).join('')
+        : '<span class="data-link-empty">ยังไม่มีรายการอื่นอ้างถึง</span>';
+    }
+    const relBox = $('#dkRelated');
+    if (relBox) {
+      const rel = relatedFor(k);
+      relBox.innerHTML = rel.length
+        ? rel.map(e => `<button type="button" data-open="${e.id}">#${esc(tagList(e.tags).find(t => tagList(k.tags).map(x => x.toLowerCase()).includes(t.toLowerCase())) || '')} ${esc(e.title)}</button>`).join('')
+        : '<span class="data-link-empty">ยังไม่มีรายการที่ใช้แท็กร่วมกัน</span>';
+    }
+    const meta = $('#dkMeta');
+    if (meta) meta.innerHTML = dataMetaLine(k);
+  }
+
+  function scheduleDataCommit() {
+    setDataSaveState('saving');
+    clearTimeout(dataDraftTimer);
+    dataDraftTimer = setTimeout(() => commitDataDraft(true), 700);
+  }
+
+  function commitDataDraft(silent) {
+    clearTimeout(dataDraftTimer);
+    const k = entryById(activeDataId);
+    const title = $('#dkTitle');
+    if (!k || !title) return;
+    k.title = title.value.trim() || 'ไม่มีชื่อ';
+    k.category = $('#dkCategory').value;
+    k.summary = $('#dkSummary').value;
+    k.body = $('#dkBody').value;
+    k.tags = $('#dkTags').value;
+    k.updatedAt = Date.now();
+    touchNovel();
+    renderDataCats();
+    renderDataTags();
+    renderDataList();
+    const meta = $('#dkMeta'); if (meta) meta.innerHTML = dataMetaLine(k);
+    setDataSaveState('saved');
+    if (!silent) toast('บันทึกข้อมูลแล้ว');
+  }
+
+  function selectDataEntry(id, openDrawer) {
+    if (activeDataId !== id) commitDataDraft(true);
+    activeDataId = id;
+    renderDataList();
+    renderDataDetail();
+    if (openDrawer && matchMedia('(max-width:1180px)').matches) setDataDetailOpen(true);
+  }
+
+  function addDataEntry(category) {
+    commitDataDraft(true);
+    const cat = category && DATA_EDIT_CATS.some(c => c.id === category) ? category : (dataCategory !== 'all' && dataCategory !== 'pinned' ? dataCategory : 'lore');
+    const k = {id: uid(), category: cat, title: 'ข้อมูลใหม่', summary: '', body: '', tags: dataTag || '', links: [], pinned: false, createdAt: Date.now(), updatedAt: Date.now()};
+    knowledge().push(k);
+    activeDataId = k.id;
+    touchNovel();
+    renderData();
+    if (matchMedia('(max-width:1180px)').matches) setDataDetailOpen(true);
+    requestAnimationFrame(() => { const el = $('#dkTitle'); if (el) { el.focus(); el.select(); } });
+  }
+
+  function duplicateDataEntry(k) {
+    if (!k) return;
+    commitDataDraft(true);
+    const copy = JSON.parse(JSON.stringify(k));
+    copy.id = uid(); copy.title = (k.title || 'ข้อมูล') + ' (สำเนา)';
+    copy.pinned = false; copy.createdAt = copy.updatedAt = Date.now();
+    copy.links = (k.links || []).slice();
+    knowledge().push(copy);
+    activeDataId = copy.id;
+    touchNovel(); renderData(); toast('ทำสำเนารายการแล้ว');
+  }
+
+  function deleteDataEntry(k) {
+    if (!k) return;
+    askYes('ลบข้อมูลรายการนี้?', `ลบ “${k.title}” ออกจากคลังข้อมูล และตัดการเชื่อมโยงที่ชี้มาที่รายการนี้`, () => {
+      const i = knowledge().findIndex(x => x.id === k.id);
+      if (i >= 0) knowledge().splice(i, 1);
+      knowledge().forEach(e => { if (Array.isArray(e.links)) e.links = e.links.filter(id => id !== k.id); });
+      activeDataId = null; setDataDetailOpen(false); touchNovel(); renderData(); toast('ลบข้อมูลแล้ว');
+    }, 'ลบ');
+  }
+
+  function entryMarkdown(k) {
+    let out = `### ${k.title || 'ไม่มีชื่อ'}\n\n`;
+    out += `- หมวด: ${dataLabel(k.category)}\n`;
+    if (tagList(k.tags).length) out += `- แท็ก: ${tagList(k.tags).map(t => '#' + t).join(' ')}\n`;
+    out += `- แก้ไข: ${fmtDate(k.updatedAt)}\n\n`;
+    if (k.summary) out += `> ${String(k.summary).replace(/\n/g, '\n> ')}\n\n`;
+    if (k.body) out += k.body + '\n\n';
+    const links = entryLinks(k);
+    if (links.length) out += `**เชื่อมโยง:** ${links.map(e => e.title).join(', ')}\n\n`;
+    return out;
+  }
+
+  function exportArchiveMarkdown() {
+    commitDataDraft(true);
+    const n = N(); if (!n) return;
+    let out = `# ${n.title} — คลังข้อมูล\n\n`;
+    if (n.author) out += `> ${n.author}\n\n`;
+    out += `ส่งออกเมื่อ ${new Date().toLocaleString('th-TH')} · ${knowledge().length} รายการ\n\n`;
+    DATA_EDIT_CATS.forEach(c => {
+      const arr = knowledge().filter(k => k.category === c.id).sort((a, b) => (b.pinned ? 1 : 0) - (a.pinned ? 1 : 0) || (b.updatedAt || 0) - (a.updatedAt || 0));
+      if (!arr.length) return;
+      out += `## ${c.label}\n\n`;
+      arr.forEach(k => { out += entryMarkdown(k) + '\n---\n\n'; });
+    });
+    const pinned = knowledge().filter(k => k.pinned);
+    if (pinned.length) out += `## ปักหมุด\n\n` + pinned.map(k => '- ' + k.title).join('\n') + '\n';
+    downloadText(out, safeFile(n.title) + '-archive.md', 'text/markdown;charset=utf-8');
+    toast('ส่งออกคลังข้อมูลเป็น Markdown แล้ว');
+  }
+
+  function exportEntryMarkdown(k) {
+    if (!k) return;
+    commitDataDraft(true);
+    downloadText(entryMarkdown(k), safeFile(k.title) + '.md', 'text/markdown;charset=utf-8');
+    toast('ส่งออกข้อมูลรายการนี้แล้ว');
+  }
+
+  function renderDataStorage() {
+    const box = $('#dataStorage'); if (!box) return;
+    let bytes = 0;
+    try { bytes = new Blob([localStorage.getItem(KEY) || '']).size; } catch(e) {}
+    const pct = Math.min(100, bytes / (5 * 1024 * 1024) * 100);
+    box.innerHTML = `<div class="data-meter"><i style="width:${pct}%"></i></div>` +
+      `<div class="data-storage-line"><span>${fmtBytes(bytes)}</span><span>${knowledge().length} รายการ</span></div>` +
+      `<button class="btn sm" type="button" id="dataStorageBtn">จัดการสำรอง</button>`;
+  }
+
+  /* link picker */
+  const linkBack = $('#linkBackdrop');
+  function openLinkPicker() {
+    if (!activeDataId) return;
+    commitDataDraft(true);
+    $('#linkSearch').value = '';
+    renderLinkResults();
+    linkBack.classList.add('open');
+    setTimeout(() => { const el = $('#linkSearch'); if (el) el.focus(); }, 50);
+  }
+  function closeLinkPicker() {
+    linkBack.classList.remove('open');
+    setDataSaveState('saved');
+    renderDataList();
+  }
+  function renderLinkResults() {
+    const box = $('#linkResults'); if (!box) return;
+    const k = entryById(activeDataId); if (!k) return;
+    const q = ($('#linkSearch').value || '').trim().toLowerCase();
+    const linked = new Set(k.links || []);
+    const arr = knowledge().filter(e => e.id !== k.id && (!q || [e.title, e.summary, e.body, e.tags, dataLabel(e.category)].join(' ').toLowerCase().includes(q)))
+      .sort((a, b) => (b.pinned ? 1 : 0) - (a.pinned ? 1 : 0) || (b.updatedAt || 0) - (a.updatedAt || 0));
+    box.innerHTML = arr.length
+      ? arr.map(e => `<button type="button" class="link-row${linked.has(e.id) ? ' on' : ''}" data-link="${e.id}"><span class="data-card-icon" style="--c:${dataColor(e.category)}">${dataIcon(e.category)}</span><span class="link-row-main"><b>${esc(e.title)}</b><small>${esc(dataLabel(e.category))}${e.pinned ? ' · ★' : ''}</small></span><span class="link-check">${linked.has(e.id) ? '✓' : '+'}</span></button>`).join('')
+      : `<div class="data-empty" style="padding:22px 12px">${knowledge().length <= 1 ? 'ยังไม่มีรายการอื่นให้เชื่อมโยง' : 'ไม่พบรายการที่ตรงกับคำค้น'}</div>`;
+  }
+
+  $('#linkResults').addEventListener('click', e => {
+    const row = e.target.closest('[data-link]'); if (!row) return;
+    const k = entryById(activeDataId), id = row.dataset.link; if (!k) return;
+    const links = Array.isArray(k.links) ? k.links : [];
+    k.links = links.includes(id) ? links.filter(x => x !== id) : links.concat(id);
+    k.updatedAt = Date.now(); touchNovel(); schedulePersist(); setDataSaveState('saved');
+    renderLinkResults(); renderDetailLinks(k); renderDataList();
+  });
+  $('#linkSearch').addEventListener('input', renderLinkResults);
+  $('#linkClose').onclick = closeLinkPicker;
+  linkBack.addEventListener('click', e => { if (e.target === linkBack) closeLinkPicker(); });
+
+  /* archive events */
+  $('#dataCategories').addEventListener('click', e => {
+    const b = e.target.closest('[data-dcat]'); if (!b) return;
+    dataCategory = b.dataset.dcat; renderData();
+  });
+  $('#dataTags').addEventListener('click', e => {
+    const b = e.target.closest('[data-dtag]'); if (!b) return;
+    dataTag = dataTag === b.dataset.dtag ? null : b.dataset.dtag; renderData();
+  });
+  $('#dataSearch').addEventListener('input', () => renderDataList());
+  $('#dataSort').addEventListener('change', e => { dataSort = e.target.value; lib.settings.dataSort = dataSort; persist(); renderDataList(); });
+  $('#dataLayout').addEventListener('change', e => { lib.settings.dataLayout = e.target.value; persist(); renderDataList(); });
+  $$('.data-seg [data-layout]').forEach(b => b.addEventListener('click', () => { lib.settings.dataLayout = b.dataset.layout; persist(); renderDataList(); }));
+  $('#dataFilters').addEventListener('click', e => {
+    const b = e.target.closest('[data-clear]'); if (!b) return;
+    if (b.dataset.clear === 'category') dataCategory = 'all';
+    else if (b.dataset.clear === 'tag') dataTag = null;
+    else if (b.dataset.clear === 'search') $('#dataSearch').value = '';
+    renderData();
+  });
+  $('#dataCount').addEventListener('click', e => {
+    if (!e.target.closest('[data-clear-all]')) return;
+    dataCategory = 'all'; dataTag = null; $('#dataSearch').value = ''; renderData();
+  });
+  $('#dataList').addEventListener('click', e => {
+    const quick = e.target.closest('[data-newcat]');
+    if (quick) { addDataEntry(quick.dataset.newcat); return; }
+    if (e.target.closest('[data-clear-all]')) { dataCategory = 'all'; dataTag = null; $('#dataSearch').value = ''; renderData(); return; }
+    const card = e.target.closest('.data-card');
+    if (card) selectDataEntry(card.dataset.id, true);
+  });
+  $('#dataDetail').addEventListener('click', e => {
+    const un = e.target.closest('[data-unlink]');
+    if (un) {
+      e.stopPropagation();
+      const k = entryById(activeDataId); if (!k) return;
+      k.links = (k.links || []).filter(id => id !== un.dataset.unlink);
+      k.updatedAt = Date.now(); touchNovel(); schedulePersist();
+      renderDetailLinks(k); renderDataList(); toast('เลิกเชื่อมโยงแล้ว');
+      return;
+    }
+    const newCat = e.target.closest('[data-newcat]');
+    if (newCat) { addDataEntry(newCat.dataset.newcat); return; }
+    const open = e.target.closest('[data-open]');
+    if (open) selectDataEntry(open.dataset.open, true);
+  });
+  $('#dataScrim').addEventListener('click', () => setDataDetailOpen(false));
+  addEventListener('resize', () => { if (innerWidth > 1180 && dataDetailOpen) setDataDetailOpen(false); });
+  $('#dataAdd').onclick = () => addDataEntry(dataCategory);
+  $('#dataExportMd').onclick = exportArchiveMarkdown;
+  $('#dataStorage').addEventListener('click', e => { if (e.target.closest('#dataStorageBtn')) openSettings(); });
+
+  /* legacy bridge for anything still pointing at the old button */
+  const legacyExportAll = $('#dataExportAll');
+  if (legacyExportAll) legacyExportAll.onclick = () => exportLibraryBackup();
+
+
   function copyToClipboard(text, done, fail) {
     try {
       if (window.LumenBridge && LumenBridge.copy) { LumenBridge.copy(text); if (done) done(); return; }
@@ -1511,35 +2359,347 @@ body.tlock .view:not([hidden]){animation:none}
     try { navigator.clipboard.writeText(text).then(done || (() => {}), fail || (() => {})); }
     catch(e) { if (fail) fail(); }
   }
-  function downloadJSON(obj,filename){
-    const text=JSON.stringify(obj,null,2);
+  function downloadText(text, filename, mime) {
+    text = String(text == null ? '' : text);
     try { if (window.LumenBridge && LumenBridge.saveFile) { LumenBridge.saveFile(filename, text); return; } } catch(e) {}
-    const blob=new Blob([text],{type:'application/json;charset=utf-8'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=filename;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);}
-  $('#dataExport').onclick=()=>exportNovel(N());
-  $('#dataExportAll').onclick=()=>{commitEditor();persist();downloadJSON({format:'LUMEN-library',version:1,exportedAt:new Date().toISOString(),library:lib},'lumen-library-backup.json');toast('ส่งออกข้อมูลทั้งหมดแล้ว');};
-  $('#dataImportBtn').onclick=()=>$('#dataImportFile').click();
-  $('#dataImportFile').onchange=async e=>{const f=e.target.files[0];e.target.value='';if(!f)return;try{const d=JSON.parse(await f.text());let incoming=d.novel||(d.library&&d.library.novels&&d.library.novels.find(x=>x.id===nid))||(d.novels&&d.novels.find(x=>x.id===nid));if(!incoming&&d.library&&Array.isArray(d.library.novels)){askYes('นำเข้าทั้งคลัง?',`ไฟล์นี้มี ${d.library.novels.length} เรื่อง การนำเข้าจะเพิ่มเรื่องเหล่านี้เข้าไป`,()=>{const ids=new Set(lib.novels.map(n=>n.id));d.library.novels.forEach(n=>{const cp=JSON.parse(JSON.stringify(n));if(ids.has(cp.id))cp.id=uid();lib.novels.push(cp);});lib=normalize(lib);persist();go('home');toast('นำเข้าคลังแล้ว');},'นำเข้า');return;}if(!incoming)throw new Error('ไม่พบข้อมูลนิยาย');const cp=JSON.parse(JSON.stringify(incoming));if(cp.id===nid){askYes('แทนที่ข้อมูลเรื่องนี้?',`ข้อมูลของ “${N().title}” จะถูกแทนด้วยข้อมูลจากไฟล์`,()=>{const ix=lib.novels.findIndex(n=>n.id===nid);lib.novels[ix]=cp;lib=normalize(lib);nid=cp.id;activeDataId=null;persist();go('data');toast('นำเข้าข้อมูลแล้ว');},'แทนที่');}else{cp.id=uid();cp.title=(cp.title||'เรื่องนำเข้า')+' (นำเข้า)';lib.novels.push(cp);persist();go('data',{novel:cp.id});toast('นำเข้าเป็นเรื่องใหม่แล้ว');}}catch(err){toast('ไฟล์ JSON ไม่ถูกต้องหรือไม่ใช่ไฟล์ LUMEN');}};
+    try {
+      const blob = new Blob([text], {type: mime || 'text/plain;charset=utf-8'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = filename; a.rel = 'noopener';
+      document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 1500);
+    } catch(e) { toast('ดาวน์โหลดไฟล์ไม่สำเร็จ'); }
+  }
+  function downloadJSON(obj, filename) {
+    downloadText(JSON.stringify(obj, null, 2), filename, 'application/json;charset=utf-8');
+  }
+  function exportLibraryBackup() {
+    try { commitEditor(); } catch(e) {}
+    try { if (view === 'data') commitDataDraft(true); } catch(e) {}
+    persist();
+    const day = new Date().toISOString().slice(0, 10);
+    downloadJSON({format:'LUMEN-library', version:2, app:'LUMEN Writing Studio', exportedAt:new Date().toISOString(), library:JSON.parse(serializeLibrary(false))}, `lumen-library-${day}.json`);
+    toast('ส่งออกข้อมูลทั้งหมดแล้ว');
+  }
+
+  async function importArchiveFile(file) {
+    let d;
+    try { d = JSON.parse(await file.text()); }
+    catch(e) { return toast('ไฟล์ JSON ไม่ถูกต้องหรือไม่ใช่ไฟล์ LUMEN'); }
+    if (!d || typeof d !== 'object') return toast('ไม่พบข้อมูลในไฟล์');
+
+    const libraryNovels = d.library && Array.isArray(d.library.novels) ? d.library.novels : (Array.isArray(d.novels) ? d.novels : null);
+    const incoming = d.novel || (Array.isArray(d.novels) && !d.library ? d.novels.find(x => x.id === nid) : null);
+
+    // A bare knowledge archive (entries only) merges into the current story.
+    if (!incoming && Array.isArray(d.knowledge) && N()) {
+      const fresh = d.knowledge.filter(e => e && typeof e === 'object');
+      if (!fresh.length) return toast('ไม่พบรายการในไฟล์');
+      const existing = knowledge();
+      const adds = fresh.filter(e => !existing.some(x => x.id === e.id || (x.title === e.title && x.category === e.category)));
+      askYes('นำเข้ารายการคลังข้อมูล?', `พบ ${fresh.length} รายการ และเป็นรายการใหม่ ${adds.length} รายการ จะเพิ่มเข้าคลังของ “${N().title}”`, () => {
+        const ids = new Set(existing.map(x => x.id));
+        const remap = new Map();
+        adds.forEach(e => {
+          const cp = JSON.parse(JSON.stringify(e));
+          if (!cp.id || ids.has(cp.id)) { const nid2 = uid(); if (cp.id) remap.set(cp.id, nid2); cp.id = nid2; }
+          ids.add(cp.id);
+          if (!Array.isArray(cp.links)) cp.links = [];
+          if (!cp.createdAt) cp.createdAt = Date.now();
+          if (!cp.updatedAt) cp.updatedAt = cp.createdAt;
+          existing.push(cp);
+        });
+        existing.forEach(e => { if (Array.isArray(e.links)) e.links = e.links.map(id => remap.get(id) || id); });
+        lib = normalize(lib); activeDataId = null; touchNovel(); persist(); renderData();
+        toast(`นำเข้า ${adds.length} รายการแล้ว`);
+      }, 'นำเข้า');
+      return;
+    }
+
+    if (!incoming && libraryNovels) {
+      askYes('นำเข้าทั้งคลัง?', `ไฟล์นี้มี ${libraryNovels.length} เรื่อง การนำเข้าจะเพิ่มเรื่องเหล่านี้เข้าไป`, () => {
+        const ids = new Set(lib.novels.map(n => n.id));
+        libraryNovels.forEach(n => {
+          const cp = JSON.parse(JSON.stringify(n));
+          if (!cp.id || ids.has(cp.id)) cp.id = uid();
+          ids.add(cp.id); lib.novels.push(cp);
+        });
+        lib = normalize(lib); persist(); hydrateCovers(); go('home'); toast('นำเข้าคลังแล้ว');
+      }, 'นำเข้า');
+      return;
+    }
+
+    if (!incoming) return toast('ไม่พบข้อมูลนิยายหรือคลังข้อมูลในไฟล์');
+    const cp = JSON.parse(JSON.stringify(incoming));
+    if (cp.id === nid) {
+      askYes('แทนที่ข้อมูลเรื่องนี้?', `ข้อมูลของ “${N().title}” จะถูกแทนด้วยข้อมูลจากไฟล์`, () => {
+        const ix = lib.novels.findIndex(n => n.id === nid);
+        if (ix < 0) return;
+        lib.novels[ix] = cp; lib = normalize(lib); nid = cp.id; activeDataId = null;
+        persist(); go('data'); toast('นำเข้าข้อมูลแล้ว');
+      }, 'แทนที่');
+    } else {
+      cp.id = uid(); cp.title = (cp.title || 'เรื่องนำเข้า') + ' (นำเข้า)';
+      lib.novels.push(cp); lib = normalize(lib); persist();
+      go('data', {novel: cp.id}); toast('นำเข้าเป็นเรื่องใหม่แล้ว');
+    }
+  }
+
+  $('#dataExport').onclick = () => exportNovel(N());
+  $('#dataImportBtn').onclick = () => $('#dataImportFile').click();
+  $('#dataImportFile').onchange = async e => {
+    const f = e.target.files[0]; e.target.value = ''; if (!f) return;
+    await importArchiveFile(f);
+  };
 
   /* ---------- settings & backup ---------- */
   const setBack = $('#settingsBackdrop');
-  function openSettings() { $('#setFont').value = String(lib.settings.fontSize); $('#setAuto').checked = lib.settings.autosave; setBack.classList.add('open'); }
+  const fmtDateTime = t => { try { return new Intl.DateTimeFormat('th-TH',{day:'numeric',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'}).format(new Date(t)); } catch(e) { return ''; } };
+  function openSettings() {
+    $('#setFont').value = String(lib.settings.fontSize);
+    $('#setAuto').checked = lib.settings.autosave;
+    setBack.classList.add('open');
+    refreshStorageUI();
+    renderSnapshotList();
+    try { refreshPwaUI(); } catch(e) {}
+  }
   function closeSettings() { setBack.classList.remove('open'); }
   $('#settingsBtn').onclick = openSettings; $('#settingsClose').onclick = closeSettings;
   setBack.addEventListener('click', e => { if (e.target === setBack) closeSettings(); });
   $('#setFont').onchange = e => { lib.settings.fontSize = +e.target.value; editor.style.fontSize = e.target.value + 'px'; persist(); toast('บันทึกขนาดตัวอักษรแล้ว'); };
   $('#setAuto').onchange = e => { lib.settings.autosave = e.target.checked; persist(); toast(e.target.checked ? 'เปิดบันทึกอัตโนมัติ' : 'ปิดบันทึกอัตโนมัติ'); };
-  $('#settingsSave').onclick = () => { commitEditor(); persist(); toast('บันทึกแล้ว'); };
+  $('#settingsSave').onclick = () => { commitEditor(); if (view === 'data') commitDataDraft(true); persist(); toast('บันทึกแล้ว'); };
+
+  function refreshStorageUI() {
+    const used = $('#storageUsed'), quota = $('#storageQuota'), bar = $('#storageBar'), hint = $('#storageHint');
+    let bytes = 0;
+    try { bytes = new Blob([localStorage.getItem(KEY) || '']).size; } catch(e) {}
+    if (used) used.textContent = `ข้อมูลหลัก ${fmtBytes(bytes)}`;
+    if (bar) bar.style.width = Math.min(100, bytes / (5 * 1024 * 1024) * 100) + '%';
+    if (navigator.storage && navigator.storage.estimate) {
+      navigator.storage.estimate().then(est => {
+        if (!quota) return;
+        if (est && est.quota) quota.textContent = `ทั้งเครื่อง ${fmtBytes(est.usage || 0)} / ${fmtBytes(est.quota)}`;
+        else quota.textContent = '—';
+      }).catch(() => { if (quota) quota.textContent = '—'; });
+    } else if (quota) quota.textContent = 'เบราว์เซอร์ไม่รายงานโควตา';
+    if (hint) hint.textContent = 'ข้อมูลทั้งหมดอยู่ในเครื่องนี้ ไม่ได้ส่งขึ้นเซิร์ฟเวอร์';
+    if (navigator.storage && navigator.storage.persisted) {
+      navigator.storage.persisted().then(p => {
+        if (hint) hint.textContent = p ? 'พื้นที่จัดเก็บถาวรแล้ว — ระบบจะไม่ล้างข้อมูลให้อัตโนมัติ' : 'ข้อมูลอยู่ในเครื่องนี้ ขอพื้นที่ถาวรเพื่อกันระบบล้างข้อมูล';
+      }).catch(() => {});
+    }
+  }
+
+  async function renderSnapshotList() {
+    const box = $('#backupList'); if (!box) return;
+    box.innerHTML = '<span class="page-sub" style="margin:0">กำลังตรวจสอบข้อมูลสำรอง…</span>';
+    const snaps = await listSnapshots();
+    if (!snaps.length) {
+      box.innerHTML = '<span class="page-sub" style="margin:0">ยังไม่มีสำรองอัตโนมัติ — ระบบจะสร้างให้หลังบันทึกงาน (เปิดผ่าน https หรือแอปที่ติดตั้งแล้ว)</span>';
+      return;
+    }
+    box.innerHTML = snaps.map(s => `<div class="backup-row"><div><b>${fmtDateTime(s.at)}</b><span>${fmtBytes(s.size)}</span></div><button class="btn sm" type="button" data-restore="${s.at}">กู้คืน</button></div>`).join('');
+  }
+
+  $('#storagePersist').onclick = async () => {
+    try {
+      if (!navigator.storage || !navigator.storage.persist) return toast('เบราว์เซอร์นี้ไม่รองรับพื้นที่ถาวร');
+      const ok = await navigator.storage.persist();
+      toast(ok ? 'ได้รับพื้นที่จัดเก็บถาวรแล้ว' : 'เบราว์เซอร์ยังไม่อนุมัติ — ลองติดตั้งแอปหรือใช้งานอีกครั้ง');
+      refreshStorageUI();
+    } catch(e) { toast('ขอพื้นที่ถาวรไม่สำเร็จ'); }
+  };
+  $('#storageBackupNow').onclick = async () => {
+    commitEditor(); if (view === 'data') commitDataDraft(true); persist();
+    const ok = await snapshotNow();
+    toast(ok ? 'สำรองข้อมูลในเครื่องแล้ว' : 'สำรองข้อมูลไม่สำเร็จ');
+    renderSnapshotList(); refreshStorageUI();
+  };
+  $('#backupList').addEventListener('click', async e => {
+    const b = e.target.closest('[data-restore]'); if (!b) return;
+    const at = +b.dataset.restore;
+    const text = await readSnapshot(at);
+    if (!text) return toast('อ่านข้อมูลสำรองไม่ได้');
+    let d; try { d = JSON.parse(text); } catch(err) { return toast('ข้อมูลสำรองเสียหาย'); }
+    if (!d || !Array.isArray(d.novels)) return toast('ข้อมูลสำรองไม่ถูกต้อง');
+    askYes('กู้คืนข้อมูลสำรอง?', `ข้อมูลปัจจุบันจะถูกแทนที่ด้วยสำรองจาก ${fmtDateTime(at)} (${d.novels.length} เรื่อง)`, () => {
+      lib = normalize(d); wcache.clear(); nid = null; cid = null; activeDataId = null;
+      persist(); closeSettings(); hydrateCovers(); go('home'); toast('กู้คืนข้อมูลสำรองแล้ว');
+    }, 'กู้คืน');
+  });
+
   $('#backupMake').onclick = () => {
-    commitEditor(); const box = $('#backupBox'); box.value = JSON.stringify(lib); box.focus(); box.select();
+    commitEditor(); if (view === 'data') commitDataDraft(true);
+    const box = $('#backupBox'); box.value = serializeLibrary(false); box.focus(); box.select();
     copyToClipboard(box.value, () => toast('คัดลอกข้อมูลสำรองแล้ว'), () => toast('เลือกข้อความแล้ว กดค้างเพื่อคัดลอก'));
+  };
+  $('#backupDownload').onclick = () => {
+    commitEditor(); if (view === 'data') commitDataDraft(true);
+    const day = new Date().toISOString().slice(0, 10);
+    downloadJSON({format:'LUMEN-library', version:2, app:'LUMEN Writing Studio', exportedAt:new Date().toISOString(), library:JSON.parse(serializeLibrary(false))}, `lumen-backup-${day}.json`);
+    toast('ดาวน์โหลดข้อมูลสำรองแล้ว');
   };
   $('#backupRestore').onclick = () => {
     let d; try { d = JSON.parse($('#backupBox').value); } catch(e) { return toast('ข้อมูลในช่องไม่ถูกต้อง'); }
+    if (d && d.library && Array.isArray(d.library.novels)) d = d.library;
     if (!d || !Array.isArray(d.novels)) return toast('ไม่พบข้อมูลนิยายในช่องนี้');
     askYes('กู้คืนข้อมูล', `จะแทนที่ข้อมูลปัจจุบันด้วยข้อมูลสำรอง ${d.novels.length} เรื่อง`, () => {
-      lib = normalize(d); wcache.clear(); nid = null; cid = null; persist(); closeSettings(); go('home'); toast('กู้คืนข้อมูลแล้ว');
+      lib = normalize(d); wcache.clear(); nid = null; cid = null; activeDataId = null;
+      persist(); closeSettings(); go('home'); toast('กู้คืนข้อมูลแล้ว');
     }, 'กู้คืน');
   };
+
+  async function offerSnapshotRecovery() {
+    if (!bootState.missing && !bootState.corrupt) return;
+    const snaps = await listSnapshots();
+    if (!snaps.length) return;
+    const latest = snaps[0];
+    askYes(bootState.corrupt ? 'พบข้อมูลหลักเสียหาย' : 'ไม่พบข้อมูลหลัก', `มีข้อมูลสำรองในเครื่องจาก ${fmtDateTime(latest.at)} (${fmtBytes(latest.size)}) ต้องการกู้คืนหรือไม่`, async () => {
+      const text = await readSnapshot(latest.at);
+      if (!text) return toast('อ่านข้อมูลสำรองไม่ได้');
+      try {
+        const d = JSON.parse(text);
+        if (!d || !Array.isArray(d.novels)) return toast('ข้อมูลสำรองไม่ถูกต้อง');
+        lib = normalize(d); wcache.clear(); nid = null; cid = null; activeDataId = null;
+        persist(); hydrateCovers(); go('home'); launchHandled = true; toast('กู้คืนข้อมูลสำรองแล้ว');
+      } catch(e) { toast('กู้คืนไม่สำเร็จ'); }
+    }, 'กู้คืน');
+  }
+
+  /* ---------- PWA: install, offline, updates ---------- */
+  const PWA = {promptEvent: null, pendingReload: false, reg: null};
+  const isStandalone = () => {
+    try {
+      return matchMedia('(display-mode: standalone)').matches ||
+        matchMedia('(display-mode: window-controls-overlay)').matches ||
+        navigator.standalone === true;
+    } catch(e) { return false; }
+  };
+  const isIosSafari = () => {
+    const ua = navigator.userAgent || '';
+    return /iphone|ipad|ipod/i.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  };
+  function refreshPwaUI() {
+    const standalone = isStandalone();
+    const installBtn = $('#installBtn'), row = $('#pwaRow'), state = $('#pwaState'), badge = $('#pwaBadge'), btn = $('#pwaInstall');
+    if (installBtn) installBtn.hidden = standalone || !PWA.promptEvent;
+    if (row) row.hidden = false;
+    if (btn) {
+      btn.hidden = standalone || (!PWA.promptEvent && !isIosSafari());
+      btn.textContent = standalone ? 'ติดตั้งแล้ว' : 'ติดตั้ง';
+    }
+    if (state) {
+      if (standalone) state.textContent = 'ติดตั้งแล้ว — เปิดแบบเต็มจอ';
+      else if (PWA.promptEvent) state.textContent = 'พร้อมติดตั้ง — เปิดเต็มจอและออฟไลน์ได้';
+      else if (isIosSafari()) state.textContent = 'iOS: แตะแชร์ แล้วเลือก “เพิ่มไปยังหน้าจอโฮม”';
+      else state.textContent = 'เปิดผ่าน https เพื่อติดตั้งเป็นแอป';
+    }
+    if (badge) {
+      badge.textContent = standalone ? 'ติดตั้งแล้ว' : 'PWA';
+      badge.classList.toggle('ok', standalone);
+    }
+  }
+  async function installPwa() {
+    if (isStandalone()) return toast('LUMEN ถูกติดตั้งเป็นแอปแล้ว');
+    if (PWA.promptEvent) {
+      const ev = PWA.promptEvent;
+      PWA.promptEvent = null;
+      try {
+        ev.prompt();
+        const choice = await ev.userChoice;
+        toast(choice && choice.outcome === 'accepted' ? 'กำลังติดตั้ง LUMEN…' : 'ยกเลิกการติดตั้ง');
+      } catch(e) {}
+      refreshPwaUI();
+      return;
+    }
+    if (isIosSafari()) return toast('บน iOS: แตะปุ่มแชร์ แล้วเลือก “เพิ่มไปยังหน้าจอโฮม”');
+    toast('เปิดผ่าน https แล้วใช้เมนูเบราว์เซอร์ → ติดตั้งแอป');
+  }
+  function initPWA() {
+    const syncNetwork = () => {
+      const off = !navigator.onLine;
+      document.body.classList.toggle('offline', off);
+      const bar = $('#offlineBar'); if (bar) bar.hidden = !off;
+    };
+    window.addEventListener('online', () => { syncNetwork(); toast('กลับมาออนไลน์แล้ว'); });
+    window.addEventListener('offline', syncNetwork);
+    syncNetwork();
+
+    window.addEventListener('beforeinstallprompt', e => {
+      e.preventDefault();
+      PWA.promptEvent = e;
+      refreshPwaUI();
+    });
+    window.addEventListener('appinstalled', () => {
+      PWA.promptEvent = null;
+      refreshPwaUI();
+      toast('ติดตั้ง LUMEN เป็นแอปแล้ว');
+    });
+    $('#installBtn').onclick = installPwa;
+    $('#pwaInstall').onclick = installPwa;
+
+    $('#updateNow').onclick = () => {
+      const sw = navigator.serviceWorker;
+      if (sw && sw.controller) { PWA.pendingReload = true; sw.controller.postMessage('SKIP_WAITING'); }
+      else location.reload();
+    };
+    $('#updateLater').onclick = () => $('#updateBar').classList.remove('on');
+
+    if ('serviceWorker' in navigator && location.protocol !== 'file:') {
+      navigator.serviceWorker.register('./sw.js', {scope: './'}).then(reg => {
+        PWA.reg = reg;
+        const watch = worker => {
+          if (!worker) return;
+          worker.addEventListener('statechange', () => {
+            if (worker.state === 'installed' && navigator.serviceWorker.controller) {
+              $('#updateBar').classList.add('on');
+            }
+          });
+        };
+        if (reg.waiting && navigator.serviceWorker.controller) $('#updateBar').classList.add('on');
+        watch(reg.installing); watch(reg.waiting);
+        reg.addEventListener('updatefound', () => watch(reg.installing));
+        reg.update().catch(() => {});
+      }).catch(err => console.warn('LUMEN PWA:', err));
+      navigator.serviceWorker.addEventListener('controllerchange', () => {
+        if (PWA.pendingReload) location.reload();
+      });
+    }
+
+    // Ask for durable storage when the browser allows it (Chrome grants for installed/engaged PWAs).
+    try { if (navigator.storage && navigator.storage.persist) navigator.storage.persist().catch(() => {}); } catch(e) {}
+
+    refreshPwaUI();
+  }
+
+  function handleLaunchParams() {
+    let params;
+    try { params = new URLSearchParams(location.search); } catch(e) { return; }
+    const keys = [...params.keys()];
+    if (!keys.length) return;
+    const wanted = params.get('go');
+    const novelId = params.get('novel');
+    const valid = ['home','cover','story','chapters','write','read','data'];
+    const wantsNew = params.get('new') === '1' || wanted === 'new';
+    const wantsView = !!(wanted && valid.includes(wanted));
+    if (!wantsNew && !wantsView) return;
+    launchHandled = true;
+    const target = novelId ? lib.novels.find(n => n.id === novelId) : lib.novels.slice().sort((a, b) => b.updatedAt - a.updatedAt)[0];
+
+    if (wantsNew) {
+      newNovel();
+    } else if (wanted === 'home') {
+      go('home');
+    } else if (target) {
+      const chapter = target.lastChapter || (target.chapters[0] && target.chapters[0].id);
+      go(wanted, Object.assign({novel: target.id}, (wanted === 'write' || wanted === 'read') ? {chapter} : {}));
+    } else {
+      newNovel(wanted === 'cover' ? null : wanted);
+    }
+    try { history.replaceState(null, '', location.pathname + location.hash); } catch(e) {}
+  }
 
   /* ---------- more menu ---------- */
   const moreBtn = $('#moreBtn'); moreBtn.setAttribute('data-menu', '');
@@ -1553,7 +2713,7 @@ body.tlock .view:not([hidden]){animation:none}
         {label:'✎ เปลี่ยนชื่อเรื่อง', run:() => askText('ชื่อเรื่อง', '', N().title, v => { N().title = (v || '').trim() || 'เรื่องไม่มีชื่อ'; touchNovel(); $('#crumb').textContent = N().title; if (view === 'cover') renderCover(); if (view === 'story') renderStory(); }, 'บันทึก')},
         {label:'+ เพิ่มบทใหม่', run:() => addChapter(view === 'write')},
         {label:'◈ คลังข้อมูลของเรื่อง', run:() => go('data')},
-        {label:'⇩ สำรองทุกเรื่อง (.json)', run:() => $('#dataExportAll').click()});
+        {label:'⇩ สำรองทุกเรื่อง (.json)', run: exportLibraryBackup});
       if (view === 'write') items.push(
         {label:'Aa ขนาดตัวอักษร', run:() => $('#typeBtn').click()},
         {label:'⇧ นำเข้าไฟล์เข้าบทนี้', run:() => $('#fileInput').click()},
@@ -1561,6 +2721,7 @@ body.tlock .view:not([hidden]){animation:none}
         {label:'ล้างเนื้อหาบทนี้', danger:true, run:() => askYes('ล้างบทนี้?', 'เนื้อหาในบทนี้จะถูกลบทั้งหมด', () => { editor.innerHTML = ''; commitEditor(); stats(); persist(); toast('ล้างบทแล้ว'); }, 'ล้าง')});
       items.push('-', {label:'ลบนิยายเรื่องนี้', danger:true, run:() => { const n = N(); askYes('ลบนิยายทั้งเรื่อง?', `${n.title} พร้อมทุกบทและตัวละคร จะถูกลบถาวร`, () => { lib.novels = lib.novels.filter(x => x.id !== n.id); mediaDel(n.id).catch(() => {}); nid = null; cid = null; persist(); go('home'); toast('ลบนิยายแล้ว'); }, 'ลบทั้งเรื่อง'); }});
     }
+    if (!isStandalone()) items.push({label:'⤓ ติดตั้งเป็นแอป (PWA)', run:installPwa});
     items.push('-', {label:'⚙ ตั้งค่า', run:openSettings}, {label:'? บทช่วยสอน', run:startTour});
     openMenu(moreBtn, items, 'right');
   };
@@ -1568,9 +2729,12 @@ body.tlock .view:not([hidden]){animation:none}
   /* ---------- keys ---------- */
   document.addEventListener('keydown', e => {
     const mod = e.ctrlKey || e.metaKey, k = e.key.toLowerCase();
-    if (mod && k === 's') { e.preventDefault(); commitEditor(); persist(); toast('บันทึกแล้ว'); }
+    if (mod && k === 's') { e.preventDefault(); commitEditor(); if (view === 'data') commitDataDraft(true); persist(); toast('บันทึกแล้ว'); }
+    if (mod && k === 'k' && view === 'data') { e.preventDefault(); $('#dataSearch').focus(); return; }
     if (mod && k === 'k' && N() && view !== 'home') { e.preventDefault(); openSearch(); }
     if (e.key === 'Escape') {
+      if (linkBack.classList.contains('open')) return closeLinkPicker();
+      if (dataDetailOpen) return setDataDetailOpen(false);
       if (dBack.classList.contains('open')) return closeDialog();
       if (sBack.classList.contains('open')) return closeSearch();
       if (setBack.classList.contains('open')) return closeSettings();
@@ -1734,9 +2898,20 @@ body.tlock .view:not([hidden]){animation:none}
     toast(tourPaused ? 'หยุดทัวร์ชั่วคราว' : 'เล่นทัวร์ต่อ');
   };
 
+  // Restore the last sort choice and initialise the archive state.
+  dataSort = lib.settings.dataSort || 'updated';
+  const sortSel = $('#dataSort'); if (sortSel) sortSel.value = dataSort;
+
   go('home');
   hydrateCovers();
-  try { if (!localStorage.getItem(TOUR_KEY)) setTimeout(startTour, 700); } catch(e) {}
+  handleLaunchParams();
+  initPWA();
+  offerSnapshotRecovery();
+  const startTourSoon = () => {
+    if (dBack.classList.contains('open')) return setTimeout(startTourSoon, 800);
+    try { if (!localStorage.getItem(TOUR_KEY) && !launchHandled) startTour(); } catch(e) {}
+  };
+  setTimeout(startTourSoon, 700);
 })();
 </script>
 

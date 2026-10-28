@@ -1,0 +1,55 @@
+name: Deploy PWA
+
+on:
+  push:
+    branches: [master, main]
+    paths:
+      - 'lumen.html'
+      - 'manifest.webmanifest'
+      - 'sw.js'
+      - 'icons/**'
+      - '.github/workflows/pages.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Prepare site
+        run: |
+          mkdir -p _site
+          cp lumen.html manifest.webmanifest sw.js _site/
+          cp -R icons _site/icons
+          cat > _site/index.html <<'HTML'
+          <!doctype html><meta charset=utf-8>
+          <meta name="viewport" content="width=device-width,initial-scale=1">
+          <meta http-equiv="refresh" content="0;url=./lumen.html">
+          <title>LUMEN Writing Studio</title>
+          <style>body{margin:0;height:100vh;display:grid;place-items:center;background:#070707;color:#f2f2ef;font:15px system-ui}a{color:#f2f2ef}</style>
+          <p>กำลังเปิด <a href="./lumen.html">LUMEN Writing Studio</a>…</p>
+          HTML
+          touch _site/.nojekyll
+          ls -lh _site
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+      - id: deployment
+        uses: actions/deploy-pages@v4
